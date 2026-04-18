@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
 import CategoryScrollableRow from '../components/CategoryScrollableRow';
 import NoteCard from '../components/NoteCard';
@@ -47,6 +48,7 @@ const MOCK_NOTES = [
 ];
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
 
@@ -105,7 +107,7 @@ export default function Dashboard() {
           </p>
         ) : (
           filteredNotes.map((note) => (
-            <NoteCard key={note.id} note={note} onClick={() => {}} />
+            <NoteCard key={note.id} note={note} onClick={() => navigate(`/notes/${note.id}`)} />
           ))
         )}
       </div>
