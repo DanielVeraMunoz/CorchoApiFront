@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Megaphone, Users, Lightbulb, CalendarDays, HandHeart, ShoppingBag, AlertTriangle, Inbox, LayoutGrid } from 'lucide-react';
+import MenuBar from '../components/MenuBar';
 
 const CATEGORY_CONFIG = {
   'Avisos oficiales': { Icon: Megaphone,    color: '#DD686D' },
@@ -156,6 +157,7 @@ export default function NoteDetail() {
   const commentsBaseDelay = 0.65;
 
   return (
+    <>
     <div style={{
       backgroundColor: 'var(--color-bg)', minHeight: '100svh', paddingBottom: '100px',
       opacity: exiting ? 0 : 1,
@@ -250,7 +252,9 @@ export default function NoteDetail() {
                 <div>
                   <p
                     onClick={() => navigate(`/users/${note.user?.id}`)}
-                    style={{ fontSize: '12px', fontWeight: '600', color: 'var(--color-text)', cursor: 'pointer', textDecoration: 'underline' }}
+                    onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                    onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+                    style={{ fontSize: '12px', fontWeight: '600', color: 'var(--color-text)', cursor: 'pointer' }}
                   >{note.user?.name}</p>
                   <p style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>{timeAgo(note.created_at)}</p>
                 </div>
@@ -344,7 +348,9 @@ export default function NoteDetail() {
                   <p style={{ fontSize: '11px', fontWeight: '600', color: 'var(--color-text-muted)' }}>
                     <span
                       onClick={(e) => { e.stopPropagation(); navigate(`/users/${comment.user?.id}`); }}
-                      style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                      onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                      onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+                      style={{ cursor: 'pointer' }}
                     >{comment.user?.name}</span> · {timeAgo(comment.created_at)}
                   </p>
                 </div>
@@ -417,5 +423,7 @@ export default function NoteDetail() {
       </div>
 
     </div>
+    <MenuBar active="home" />
+    </>
   );
 }

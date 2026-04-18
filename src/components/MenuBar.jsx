@@ -1,19 +1,34 @@
 import { useNavigate } from 'react-router-dom';
-import { Home, PenLine, UserCircle } from 'lucide-react';
+import { Home, PenLine, Users, UserCircle } from 'lucide-react';
 
 // En producción viene del contexto de auth
 const MY_USER_ID = 2;
 
 const items = [
-  { key: 'home',    label: 'Inicio', Icon: Home,       path: '/dashboard' },
-  { key: 'create',  label: 'Crear',  Icon: PenLine,    path: '/notes/new' },
-  { key: 'profile', label: 'Perfil', Icon: UserCircle, path: `/users/${MY_USER_ID}` },
+  { key: 'home',      label: 'Inicio',     Icon: Home,        path: '/dashboard' },
+  { key: 'create',    label: 'Crear',      Icon: PenLine,     path: '/notes/new' },
+  { key: 'community', label: 'Comunidad',  Icon: Users,       path: '/community' },
+  { key: 'profile',   label: 'Perfil',     Icon: UserCircle,  path: `/users/${MY_USER_ID}` },
 ];
 
 export default function MenuBar({ active }) {
   const navigate = useNavigate();
 
   return (
+    <>
+    {/* Degradado que se funde con el fondo, siempre encima del contenido */}
+    <div style={{
+      position: 'fixed',
+      bottom: 0,
+      left: '50%',
+      transform: 'translateX(-50%)',
+      width: '100%',
+      maxWidth: '390px',
+      height: '130px',
+      background: 'linear-gradient(to bottom, transparent, var(--color-bg))',
+      pointerEvents: 'none',
+      zIndex: 99,
+    }} />
     <div style={{
       position: 'fixed',
       bottom: '20px',
@@ -62,5 +77,6 @@ export default function MenuBar({ active }) {
         );
       })}
     </div>
+    </>
   );
 }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Heart, Star, Pencil, Megaphone, CalendarDays, ShoppingBag, LayoutGrid } from 'lucide-react';
+import MenuBar from '../components/MenuBar';
 
 // En producción esto vendrá del contexto de autenticación
 const MY_USER_ID = 2;
@@ -121,8 +122,9 @@ export default function UserProfile() {
   const cardRotation = user.id % 2 === 0 ? 0.8 : -1;
 
   return (
+    <>
     <div style={{
-      backgroundColor: 'var(--color-bg)', minHeight: '100svh', paddingBottom: '60px',
+      backgroundColor: 'var(--color-bg)', minHeight: '100svh', paddingBottom: '100px',
       opacity: exiting ? 0 : 1,
       transform: exiting ? 'translateX(30px)' : 'translateX(0)',
       transition: 'opacity 0.25s ease, transform 0.25s ease',
@@ -347,5 +349,7 @@ export default function UserProfile() {
       )}
 
     </div>
+    <MenuBar active="profile" />
+    </>
   );
 }
