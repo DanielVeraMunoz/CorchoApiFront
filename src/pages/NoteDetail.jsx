@@ -449,15 +449,17 @@ export default function NoteDetail() {
 
         {/* Panel */}
         <div style={{
-          position: 'fixed', bottom: 0,
-          left: '50%', transform: `translateX(-50%) translateY(${modalEntered ? '0' : '100%'})`,
-          width: '100%', maxWidth: '390px',
+          position: 'fixed', top: '50%',
+          left: '50%',
+          transform: `translateX(-50%) translateY(-50%) scale(${modalEntered ? '1' : '0.82'}) rotate(${modalEntered ? '-0.8' : '-3'}deg)`,
+          width: 'calc(100% - 48px)', maxWidth: '360px',
           backgroundColor: 'var(--color-white)',
           border: '1px solid var(--color-border)',
-          borderBottom: 'none',
-          padding: '28px 20px 48px',
+          padding: '28px 20px 32px',
           zIndex: 201,
-          transition: 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          opacity: modalEntered ? 1 : 0,
+          transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease',
+          boxShadow: '4px 8px 24px rgba(0,0,0,0.18)',
         }}>
 
           {/* Tape */}
