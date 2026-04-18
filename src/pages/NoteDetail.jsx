@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Megaphone, Users, Lightbulb, CalendarDays, HandHeart, ShoppingBag, AlertTriangle, Inbox, LayoutGrid } from 'lucide-react';
-import MenuBar from '../components/MenuBar';
 
 const CATEGORY_CONFIG = {
   'Avisos oficiales': { Icon: Megaphone,    color: '#DD686D' },
@@ -122,11 +121,17 @@ export default function NoteDetail() {
 
   // Controla toda la secuencia de animación de entrada
   const [entered, setEntered] = useState(false);
+  const [exiting, setExiting] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setEntered(true), 50);
     return () => clearTimeout(t);
   }, []);
+
+  const handleBack = () => {
+    setExiting(true);
+    setTimeout(() => navigate('/dashboard'), 260);
+  };
 
   const note = MOCK_NOTES.find((n) => n.id === Number(id));
   const comments = MOCK_COMMENTS[Number(id)] || [];
@@ -151,7 +156,12 @@ export default function NoteDetail() {
   const commentsBaseDelay = 0.65;
 
   return (
-    <div style={{ backgroundColor: 'var(--color-bg)', minHeight: '100svh', paddingBottom: '100px' }}>
+    <div style={{
+      backgroundColor: 'var(--color-bg)', minHeight: '100svh', paddingBottom: '100px',
+      opacity: exiting ? 0 : 1,
+      transform: exiting ? 'translateX(30px)' : 'translateX(0)',
+      transition: 'opacity 0.25s ease, transform 0.25s ease',
+    }}>
 
       {/* Botón volver — desliza desde la izquierda */}
       <div style={{
@@ -161,7 +171,7 @@ export default function NoteDetail() {
         transition: 'opacity 0.3s ease, transform 0.3s ease',
       }}>
         <button
-          onClick={() => navigate('/dashboard')}
+          onClick={handleBack}
           style={{
             display: 'flex', alignItems: 'center', gap: '6px',
             background: 'none', border: 'none', cursor: 'pointer',
@@ -233,7 +243,7 @@ export default function NoteDetail() {
                   width: '30px', height: '30px',
                   backgroundColor: 'var(--color-accent)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: 'white', fontWeight: '700', fontSize: '13px',
+                  color: 'white', fontFamily: 'var(--font-display)', fontSize: '16px',
                 }}>
                   {initial}
                 </div>
@@ -324,7 +334,7 @@ export default function NoteDetail() {
                   <div style={{
                     width: '22px', height: '22px', backgroundColor: '#DDC068',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: 'white', fontWeight: '700', fontSize: '11px', flexShrink: 0,
+                    color: 'white', fontFamily: 'var(--font-display)', fontSize: '13px', flexShrink: 0,
                   }}>
                     {commentInitial}
                   </div>
@@ -400,7 +410,6 @@ export default function NoteDetail() {
 
       </div>
 
-      <MenuBar active="home" />
     </div>
   );
 }
