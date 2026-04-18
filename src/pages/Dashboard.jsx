@@ -60,7 +60,7 @@ export default function Dashboard() {
       {/* Header */}
       <div style={{
         backgroundColor: 'var(--color-bg)',
-        borderBottom: '2px solid var(--color-border)',
+        borderBottom: '1px solid var(--color-border)',
         padding: '48px 18px 16px 18px',
         textAlign: 'center',
         marginBottom: '20px',
