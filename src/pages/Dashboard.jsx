@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
 import CategoryScrollableRow from '../components/CategoryScrollableRow';
 import NoteCard from '../components/NoteCard';
@@ -47,15 +48,36 @@ const MOCK_NOTES = [
 ];
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [visible, setVisible] = useState(false);
+  const [exiting, setExiting] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setVisible(true), 30);
+    return () => clearTimeout(t);
+  }, []);
+
+  const goToNote = (id) => {
+    setExiting(true);
+    setTimeout(() => navigate(`/notes/${id}`), 260);
+  };
 
   const filteredNotes = MOCK_NOTES.filter((note) =>
     note.title.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <div style={{ backgroundColor: 'var(--color-bg)', minHeight: '100svh', paddingBottom: '100px' }}>
+    <>
+    <div style={{
+      backgroundColor: 'var(--color-bg)', minHeight: '100svh', paddingBottom: '100px',
+      opacity: exiting ? 0 : (visible ? 1 : 0),
+      transform: exiting ? 'translateX(-24px)' : 'translateX(0)',
+      transition: exiting
+        ? 'opacity 0.25s ease, transform 0.25s ease'
+        : 'opacity 0.3s ease',
+    }}>
 
       {/* Header */}
       <div style={{
@@ -105,26 +127,27 @@ export default function Dashboard() {
           </p>
         ) : (
           filteredNotes.map((note) => (
-            <NoteCard key={note.id} note={note} onClick={() => {}} />
+            <NoteCard key={note.id} note={note} onClick={() => goToNote(note.id)} />
           ))
         )}
       </div>
 
-      {/* Fade bottom */}
-      <div style={{
-        position: 'fixed',
-        bottom: 0,
-        left: '50%',
-        transform: 'translateX(-50%)',
-        width: '100%',
-        maxWidth: '390px',
-        height: '150px',
-        background: 'linear-gradient(to bottom, transparent, var(--color-bg))',
-        pointerEvents: 'none',
-        zIndex: 99,
-      }} />
-
-      <MenuBar active="home" />
     </div>
+
+    {/* Fuera del div animado para que position:fixed funcione correctamente */}
+    <div style={{
+      position: 'fixed',
+      bottom: 0,
+      left: '50%',
+      transform: 'translateX(-50%)',
+      width: '100%',
+      maxWidth: '390px',
+      height: '150px',
+      background: 'linear-gradient(to bottom, transparent, var(--color-bg))',
+      pointerEvents: 'none',
+      zIndex: 99,
+    }} />
+    <MenuBar active="home" />
+    </>
   );
 }
