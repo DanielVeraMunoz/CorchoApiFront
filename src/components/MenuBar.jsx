@@ -1,13 +1,32 @@
-import { Home, PenLine, UserCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Home, PenLine, Users, UserCircle } from 'lucide-react';
+
+const MY_USER_ID = 2;
 
 const items = [
-  { key: 'home', label: 'Inicio', Icon: Home },
-  { key: 'create', label: 'Crear', Icon: PenLine },
-  { key: 'profile', label: 'Perfil', Icon: UserCircle },
+  { key: 'home',      label: 'Inicio',    Icon: Home,        path: '/dashboard' },
+  { key: 'create',    label: 'Crear',     Icon: PenLine,     path: '/notes/new' },
+  { key: 'community', label: 'Comunidad', Icon: Users,       path: '/community' },
+  { key: 'profile',   label: 'Perfil',    Icon: UserCircle,  path: `/users/${MY_USER_ID}` },
 ];
 
 export default function MenuBar({ active }) {
+  const navigate = useNavigate();
+
   return (
+    <>
+    <div style={{
+      position: 'fixed',
+      bottom: 0,
+      left: '50%',
+      transform: 'translateX(-50%)',
+      width: '100%',
+      maxWidth: '390px',
+      height: '130px',
+      background: 'linear-gradient(to bottom, transparent, var(--color-bg))',
+      pointerEvents: 'none',
+      zIndex: 99,
+    }} />
     <div style={{
       position: 'fixed',
       bottom: '20px',
@@ -18,24 +37,19 @@ export default function MenuBar({ active }) {
       borderRadius: '50px',
       display: 'flex',
       alignItems: 'center',
-      padding: '10px 28px',
-      gap: '36px',
+      padding: '10px 20px',
+      gap: '24px',
       zIndex: 100,
     }}>
-      {items.map(({ key, label, Icon }) => {
+      {items.map(({ key, label, Icon, path }) => {
         const isActive = active === key;
         return (
           <button
             key={key}
+            onClick={() => navigate(path)}
             style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '3px',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              padding: '4px 8px',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px',
+              background: 'none', border: 'none', cursor: 'pointer', padding: '4px 6px',
             }}
           >
             <Icon
@@ -44,8 +58,7 @@ export default function MenuBar({ active }) {
               color={isActive ? 'var(--color-accent)' : 'var(--color-text-muted)'}
             />
             <span style={{
-              fontSize: '10px',
-              fontFamily: 'var(--font)',
+              fontSize: '10px', fontFamily: 'var(--font)',
               fontWeight: isActive ? '800' : '500',
               color: isActive ? 'var(--color-accent)' : 'var(--color-text-muted)',
             }}>
@@ -55,5 +68,6 @@ export default function MenuBar({ active }) {
         );
       })}
     </div>
+    </>
   );
 }
