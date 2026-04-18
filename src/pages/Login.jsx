@@ -32,7 +32,32 @@ const labelStyle = {
   marginBottom: '6px',
 };
 
-// Hook que escribe el texto carácter a carácter
+// Truco CSS moderno: grid-template-rows 0fr → 1fr anima altura desde/hasta 0
+// sin necesitar conocer la altura exacta del contenido
+function AnimatedField({ visible, children }) {
+  return (
+    <div style={{
+      display: 'grid',
+      gridTemplateRows: visible ? '1fr' : '0fr',
+      transition: 'grid-template-rows 0.38s ease',
+    }}>
+      <div style={{
+        overflow: 'hidden',
+        minHeight: 0,
+        opacity: visible ? 1 : 0,
+        // Al abrir: espera 0.2s (el hueco se abre primero) y luego aparece el contenido
+        // Al cerrar: desaparece inmediatamente antes de que el hueco se cierre
+        transition: visible
+          ? 'opacity 0.22s ease 0.18s'
+          : 'opacity 0.12s ease',
+      }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// Escribe el texto carácter a carácter
 function useTypewriter(text, speed = 38) {
   const [displayed, setDisplayed] = useState('');
   const [done, setDone] = useState(false);
@@ -55,7 +80,7 @@ function useTypewriter(text, speed = 38) {
   return { displayed, done };
 }
 
-// Cursor que parpadea mientras se escribe, desaparece al terminar
+// Cursor parpadeante que desaparece al terminar de escribir
 function Cursor({ visible }) {
   const [show, setShow] = useState(true);
 
@@ -82,7 +107,6 @@ export default function Login() {
   const { displayed, done } = useTypewriter(modeText);
 
   const switchMode = () => {
-    // Pequeño wobble físico al cambiar de modo
     setWobble(true);
     setTimeout(() => {
       setIsLogin((prev) => !prev);
@@ -182,7 +206,7 @@ export default function Login() {
       {/* Formulario principal */}
       <div style={{ position: 'relative', width: '100%', maxWidth: '340px', zIndex: 10 }}>
 
-        {/* Tape del formulario */}
+        {/* Tape */}
         <div style={{
           position: 'absolute', top: '-11px', left: '50%',
           transform: 'translateX(-50%) rotate(-1.5deg)',
@@ -193,7 +217,7 @@ export default function Login() {
           boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
         }} />
 
-        {/* Card — wobble físico al cambiar de modo */}
+        {/* Card */}
         <div style={{
           backgroundColor: 'var(--color-white)',
           border: '1px solid var(--color-border)',
@@ -227,7 +251,7 @@ export default function Login() {
             </p>
           </div>
 
-          {/* Título de modo con efecto typewriter */}
+          {/* Título de modo con typewriter */}
           <p style={{
             fontSize: '16px',
             fontWeight: '700',
@@ -241,10 +265,8 @@ export default function Login() {
             {displayed}<Cursor visible={!done} />
           </p>
 
-          {/* Campos */}
-
-          {/* Nombre — solo registro */}
-          {!isLogin && (
+          {/* Campo: Nombre — solo registro, animado */}
+          <AnimatedField visible={!isLogin}>
             <div style={{ marginBottom: '14px' }}>
               <label style={labelStyle}>Nombre</label>
               <input
@@ -257,9 +279,9 @@ export default function Login() {
                 onBlur={handleBlur}
               />
             </div>
-          )}
+          </AnimatedField>
 
-          {/* Email */}
+          {/* Campo: Email */}
           <div style={{ marginBottom: '14px' }}>
             <label style={labelStyle}>Email</label>
             <input
@@ -273,7 +295,7 @@ export default function Login() {
             />
           </div>
 
-          {/* Contraseña */}
+          {/* Campo: Contraseña */}
           <div style={{ marginBottom: '14px' }}>
             <label style={labelStyle}>Contraseña</label>
             <input
@@ -287,8 +309,8 @@ export default function Login() {
             />
           </div>
 
-          {/* Comunidad — solo registro */}
-          {!isLogin && (
+          {/* Campo: Comunidad — solo registro, animado */}
+          <AnimatedField visible={!isLogin}>
             <div style={{ marginBottom: '14px' }}>
               <label style={labelStyle}>Comunidad</label>
               <select
@@ -304,7 +326,7 @@ export default function Login() {
                 ))}
               </select>
             </div>
-          )}
+          </AnimatedField>
 
           {/* Botón */}
           <button
@@ -329,7 +351,7 @@ export default function Login() {
             {isLogin ? 'Entrar' : 'Crear cuenta'}
           </button>
 
-          {/* Toggle login ↔ registro */}
+          {/* Toggle */}
           <p style={{ textAlign: 'center', fontSize: '12px', color: 'var(--color-text-muted)', marginTop: '20px' }}>
             {isLogin ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?'}{' '}
             <button
