@@ -134,19 +134,6 @@ export default function Dashboard() {
 
     </div>
 
-    {/* Fuera del div animado para que position:fixed funcione correctamente */}
-    <div style={{
-      position: 'fixed',
-      bottom: 0,
-      left: '50%',
-      transform: 'translateX(-50%)',
-      width: '100%',
-      maxWidth: '390px',
-      height: '150px',
-      background: 'linear-gradient(to bottom, transparent, var(--color-bg))',
-      pointerEvents: 'none',
-      zIndex: 99,
-    }} />
     <MenuBar active="home" />
     </>
   );

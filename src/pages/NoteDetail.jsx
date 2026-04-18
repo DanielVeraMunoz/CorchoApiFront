@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Megaphone, Users, Lightbulb, CalendarDays, HandHeart, ShoppingBag, AlertTriangle, Inbox, LayoutGrid } from 'lucide-react';
+import MenuBar from '../components/MenuBar';
 
 const CATEGORY_CONFIG = {
   'Avisos oficiales': { Icon: Megaphone,    color: '#DD686D' },
@@ -21,7 +22,7 @@ const MOCK_NOTES = [
     description: 'El jueves 17 habrá corte de agua de 9:00 a 14:00 por obras en la red principal. Se recomienda tener agua embotellada para ese período y llenar recipientes la noche anterior si es posible.',
     is_completed: false,
     created_at: new Date(Date.now() - 2 * 86400000).toISOString(),
-    user: { name: 'Ana García' },
+    user: { id: 1, name: 'Ana García' },
     category: { name: 'Avisos oficiales' },
   },
   {
@@ -30,7 +31,7 @@ const MOCK_NOTES = [
     description: 'Este sábado organizamos una barbacoa en el patio. ¡Todos estáis invitados! Traed algo para compartir. Empezamos a las 13:00h. Los niños son bienvenidos.',
     is_completed: false,
     created_at: new Date(Date.now() - 1 * 86400000).toISOString(),
-    user: { name: 'Carlos M.' },
+    user: { id: 2, name: 'Carlos M.' },
     category: { name: 'Eventos' },
   },
   {
@@ -39,20 +40,20 @@ const MOCK_NOTES = [
     description: 'Vendo bici de montaña en buen estado. 150€. Interesados contactar por el portal o dejar nota en el buzón del 3ºB.',
     is_completed: true,
     created_at: new Date(Date.now() - 5 * 86400000).toISOString(),
-    user: { name: 'Laura P.' },
+    user: { id: 3, name: 'Laura P.' },
     category: { name: 'Mercadillo' },
   },
 ];
 
 const MOCK_COMMENTS = {
   1: [
-    { id: 1, user: { name: 'Carlos M.' },  text: 'Gracias por avisar, justo me pillaba duchándome jaja',      created_at: new Date(Date.now() - 1.5 * 86400000).toISOString() },
-    { id: 2, user: { name: 'Laura P.' },   text: '¿Sabes si afecta también al portal B?',                      created_at: new Date(Date.now() - 1.0 * 86400000).toISOString() },
-    { id: 3, user: { name: 'Ana García' }, text: 'Sí, afecta a todo el edificio según el comunicado oficial.', created_at: new Date(Date.now() - 0.5 * 86400000).toISOString() },
+    { id: 1, user: { id: 2, name: 'Carlos M.' },  text: 'Gracias por avisar, justo me pillaba duchándome jaja',      created_at: new Date(Date.now() - 1.5 * 86400000).toISOString() },
+    { id: 2, user: { id: 3, name: 'Laura P.' },   text: '¿Sabes si afecta también al portal B?',                      created_at: new Date(Date.now() - 1.0 * 86400000).toISOString() },
+    { id: 3, user: { id: 1, name: 'Ana García' }, text: 'Sí, afecta a todo el edificio según el comunicado oficial.', created_at: new Date(Date.now() - 0.5 * 86400000).toISOString() },
   ],
   2: [
-    { id: 4, user: { name: 'Ana García' }, text: '¡Me apunto! ¿Hay que traer algo en concreto?', created_at: new Date(Date.now() - 0.8 * 86400000).toISOString() },
-    { id: 5, user: { name: 'Laura P.' },   text: 'Yo llevo ensalada :)',                          created_at: new Date(Date.now() - 0.4 * 86400000).toISOString() },
+    { id: 4, user: { id: 1, name: 'Ana García' }, text: '¡Me apunto! ¿Hay que traer algo en concreto?', created_at: new Date(Date.now() - 0.8 * 86400000).toISOString() },
+    { id: 5, user: { id: 3, name: 'Laura P.' },   text: 'Yo llevo ensalada :)',                          created_at: new Date(Date.now() - 0.4 * 86400000).toISOString() },
   ],
   3: [],
 };
@@ -156,6 +157,7 @@ export default function NoteDetail() {
   const commentsBaseDelay = 0.65;
 
   return (
+    <>
     <div style={{
       backgroundColor: 'var(--color-bg)', minHeight: '100svh', paddingBottom: '100px',
       opacity: exiting ? 0 : 1,
@@ -248,7 +250,12 @@ export default function NoteDetail() {
                   {initial}
                 </div>
                 <div>
-                  <p style={{ fontSize: '12px', fontWeight: '600', color: 'var(--color-text)' }}>{note.user?.name}</p>
+                  <p
+                    onClick={() => navigate(`/users/${note.user?.id}`)}
+                    onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                    onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+                    style={{ fontSize: '12px', fontWeight: '600', color: 'var(--color-text)', cursor: 'pointer' }}
+                  >{note.user?.name}</p>
                   <p style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>{timeAgo(note.created_at)}</p>
                 </div>
               </div>
@@ -339,7 +346,12 @@ export default function NoteDetail() {
                     {commentInitial}
                   </div>
                   <p style={{ fontSize: '11px', fontWeight: '600', color: 'var(--color-text-muted)' }}>
-                    {comment.user?.name} · {timeAgo(comment.created_at)}
+                    <span
+                      onClick={(e) => { e.stopPropagation(); navigate(`/users/${comment.user?.id}`); }}
+                      onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                      onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+                      style={{ cursor: 'pointer' }}
+                    >{comment.user?.name}</span> · {timeAgo(comment.created_at)}
                   </p>
                 </div>
               </div>
@@ -411,5 +423,7 @@ export default function NoteDetail() {
       </div>
 
     </div>
+    <MenuBar active="home" />
+    </>
   );
 }
