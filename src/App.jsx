@@ -12,7 +12,7 @@ export default function App() {
         <Route path="/dashboard"   element={<Dashboard />} />
         <Route path="/notes/new"   element={<CreateNote />} />
         <Route path="/notes/:id"   element={<NoteDetail />} />
-        <Route path="*"            element={<Navigate to="/" />} />
+        <Route path="*"            element={<Navigate to="/dashboard" />} />
       </Routes>
     </BrowserRouter>
   );
