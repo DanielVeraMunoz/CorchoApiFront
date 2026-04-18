@@ -1,12 +1,18 @@
+import { useNavigate } from 'react-router-dom';
 import { Home, PenLine, UserCircle } from 'lucide-react';
 
+// En producción viene del contexto de auth
+const MY_USER_ID = 2;
+
 const items = [
-  { key: 'home', label: 'Inicio', Icon: Home },
-  { key: 'create', label: 'Crear', Icon: PenLine },
-  { key: 'profile', label: 'Perfil', Icon: UserCircle },
+  { key: 'home',    label: 'Inicio', Icon: Home,       path: '/dashboard' },
+  { key: 'create',  label: 'Crear',  Icon: PenLine,    path: '/notes/new' },
+  { key: 'profile', label: 'Perfil', Icon: UserCircle, path: `/users/${MY_USER_ID}` },
 ];
 
 export default function MenuBar({ active }) {
+  const navigate = useNavigate();
+
   return (
     <div style={{
       position: 'fixed',
@@ -22,11 +28,12 @@ export default function MenuBar({ active }) {
       gap: '36px',
       zIndex: 100,
     }}>
-      {items.map(({ key, label, Icon }) => {
+      {items.map(({ key, label, Icon, path }) => {
         const isActive = active === key;
         return (
           <button
             key={key}
+            onClick={() => navigate(path)}
             style={{
               display: 'flex',
               flexDirection: 'column',
