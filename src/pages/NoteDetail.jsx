@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Megaphone, Users, Lightbulb, CalendarDays, HandHeart, ShoppingBag, AlertTriangle, Inbox, LayoutGrid } from 'lucide-react';
+import { ArrowLeft, Megaphone, Users, Lightbulb, CalendarDays, HandHeart, ShoppingBag, AlertTriangle, Inbox, LayoutGrid, Heart, CheckCircle } from 'lucide-react';
 import MenuBar from '../components/MenuBar';
+
+const MY_USER_ID = 2;
 
 const CATEGORY_CONFIG = {
   'Avisos oficiales': { Icon: Megaphone,    color: '#DD686D' },
@@ -17,31 +19,22 @@ const DEFAULT_CONFIG = { Icon: LayoutGrid, color: '#6B7280' };
 
 const MOCK_NOTES = [
   {
-    id: 1,
-    title: 'Corte de agua el jueves',
+    id: 1, title: 'Corte de agua el jueves',
     description: 'El jueves 17 habrá corte de agua de 9:00 a 14:00 por obras en la red principal. Se recomienda tener agua embotellada para ese período y llenar recipientes la noche anterior si es posible.',
-    is_completed: false,
-    created_at: new Date(Date.now() - 2 * 86400000).toISOString(),
-    user: { id: 1, name: 'Ana García' },
-    category: { name: 'Avisos oficiales' },
+    is_completed: false, created_at: new Date(Date.now() - 2 * 86400000).toISOString(),
+    user: { id: 1, name: 'Ana García' }, category: { name: 'Avisos oficiales' },
   },
   {
-    id: 2,
-    title: 'Fiesta de vecinos en el patio',
+    id: 2, title: 'Fiesta de vecinos en el patio',
     description: 'Este sábado organizamos una barbacoa en el patio. ¡Todos estáis invitados! Traed algo para compartir. Empezamos a las 13:00h. Los niños son bienvenidos.',
-    is_completed: false,
-    created_at: new Date(Date.now() - 1 * 86400000).toISOString(),
-    user: { id: 2, name: 'Carlos M.' },
-    category: { name: 'Eventos' },
+    is_completed: false, created_at: new Date(Date.now() - 1 * 86400000).toISOString(),
+    user: { id: 2, name: 'Carlos M.' }, category: { name: 'Eventos' },
   },
   {
-    id: 3,
-    title: 'Se vende bicicleta',
+    id: 3, title: 'Se vende bicicleta',
     description: 'Vendo bici de montaña en buen estado. 150€. Interesados contactar por el portal o dejar nota en el buzón del 3ºB.',
-    is_completed: true,
-    created_at: new Date(Date.now() - 5 * 86400000).toISOString(),
-    user: { id: 3, name: 'Laura P.' },
-    category: { name: 'Mercadillo' },
+    is_completed: true, created_at: new Date(Date.now() - 5 * 86400000).toISOString(),
+    user: { id: 3, name: 'Laura P.' }, category: { name: 'Mercadillo' },
   },
 ];
 
@@ -58,59 +51,48 @@ const MOCK_COMMENTS = {
   3: [],
 };
 
+const MOCK_ALL_USERS = [
+  { id: 1, name: 'Ana García', floor: '1', door: 'A' },
+  { id: 2, name: 'Carlos M.',  floor: '3', door: 'B' },
+  { id: 3, name: 'Laura P.',   floor: '2', door: 'C' },
+  { id: 4, name: 'John Doe',   floor: '4', door: 'A' },
+  { id: 5, name: 'Jane Smith', floor: '1', door: 'B' },
+];
+
 const COMMENT_ROTATIONS = [-1.5, 0.8, -0.6, 1.2, -1, 0.5];
 
 function timeAgo(dateString) {
-  const now = new Date();
-  const date = new Date(dateString);
-  const diffMs = now - date;
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const diffDays = Math.floor((Date.now() - new Date(dateString)) / 86400000);
   if (diffDays === 0) return 'hoy';
   if (diffDays === 1) return 'ayer';
   if (diffDays < 7) return `hace ${diffDays}d`;
   return `hace ${Math.floor(diffDays / 7)}sem`;
 }
 
-// Escribe el texto carácter a carácter, con delay opcional de inicio
 function useTypewriter(text, speed = 38, startDelay = 0) {
   const [displayed, setDisplayed] = useState('');
   const [done, setDone] = useState(false);
-
   useEffect(() => {
-    setDisplayed('');
-    setDone(false);
-    let i = 0;
-    let interval;
-
+    setDisplayed(''); setDone(false);
+    let i = 0; let interval;
     const timeout = setTimeout(() => {
       interval = setInterval(() => {
-        i++;
-        setDisplayed(text.slice(0, i));
-        if (i >= text.length) {
-          setDone(true);
-          clearInterval(interval);
-        }
+        i++; setDisplayed(text.slice(0, i));
+        if (i >= text.length) { setDone(true); clearInterval(interval); }
       }, speed);
     }, startDelay);
-
-    return () => {
-      clearTimeout(timeout);
-      clearInterval(interval);
-    };
+    return () => { clearTimeout(timeout); clearInterval(interval); };
   }, [text, speed, startDelay]);
-
   return { displayed, done };
 }
 
 function Cursor({ visible }) {
   const [show, setShow] = useState(true);
-
   useEffect(() => {
     if (!visible) return;
     const t = setInterval(() => setShow((s) => !s), 500);
     return () => clearInterval(t);
   }, [visible]);
-
   if (!visible) return null;
   return <span style={{ opacity: show ? 1 : 0, fontWeight: 400 }}>|</span>;
 }
@@ -118,11 +100,23 @@ function Cursor({ visible }) {
 export default function NoteDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+
+  const [entered, setEntered]       = useState(false);
+  const [exiting, setExiting]       = useState(false);
   const [newComment, setNewComment] = useState('');
 
-  // Controla toda la secuencia de animación de entrada
-  const [entered, setEntered] = useState(false);
-  const [exiting, setExiting] = useState(false);
+  // Estado local de completado (hasta conectar API)
+  const [isCompleted, setIsCompleted] = useState(false);
+
+  // Modal de resolución
+  const [showModal, setShowModal]         = useState(false);
+  const [modalEntered, setModalEntered]   = useState(false);
+  const [thankedUsers, setThankedUsers]   = useState([]);
+  const [showCommunity, setShowCommunity] = useState(false);
+
+  // Toast
+  const [showToast, setShowToast]   = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setEntered(true), 50);
@@ -132,6 +126,36 @@ export default function NoteDetail() {
   const handleBack = () => {
     setExiting(true);
     setTimeout(() => navigate('/dashboard'), 260);
+  };
+
+  const openModal = () => {
+    setShowModal(true);
+    setThankedUsers([]);
+    setShowCommunity(false);
+    setTimeout(() => setModalEntered(true), 20);
+  };
+
+  const closeModal = () => {
+    setModalEntered(false);
+    setTimeout(() => setShowModal(false), 300);
+  };
+
+  const toggleThanks = (userId) => {
+    setThankedUsers((prev) =>
+      prev.includes(userId) ? prev.filter((u) => u !== userId) : [...prev, userId]
+    );
+  };
+
+  const handleResolve = () => {
+    setIsCompleted(true);
+    closeModal();
+    // Toast
+    setTimeout(() => {
+      setShowToast(true);
+      setTimeout(() => setToastVisible(true), 30);
+      setTimeout(() => setToastVisible(false), 2500);
+      setTimeout(() => setShowToast(false), 3000);
+    }, 320);
   };
 
   const note = MOCK_NOTES.find((n) => n.id === Number(id));
@@ -149,12 +173,21 @@ export default function NoteDetail() {
   const { Icon: CategoryIcon, color: categoryColor } = CATEGORY_CONFIG[note.category?.name] || DEFAULT_CONFIG;
   const initial = note.user?.name?.charAt(0).toUpperCase() || '?';
   const noteRotation = note.id % 2 === 0 ? 0.8 : -1;
+  const isAuthor = note.user?.id === MY_USER_ID;
+  const completed = isCompleted || note.is_completed;
 
-  // El título empieza a escribirse cuando la nota ya lleva 400ms en pantalla
   const { displayed: titleDisplayed, done: titleDone } = useTypewriter(note.title, 36, 400);
-
-  // Delay base para los comentarios — empiezan tras la nota + título
   const commentsBaseDelay = 0.65;
+
+  // Usuarios únicos que comentaron (sin el autor)
+  const commenters = comments
+    .map((c) => c.user)
+    .filter((u, i, arr) => u.id !== note.user?.id && arr.findIndex((x) => x.id === u.id) === i);
+
+  // Lista a mostrar en el modal
+  const modalUsers = showCommunity
+    ? MOCK_ALL_USERS.filter((u) => u.id !== note.user?.id)
+    : commenters;
 
   return (
     <>
@@ -165,28 +198,24 @@ export default function NoteDetail() {
       transition: 'opacity 0.25s ease, transform 0.25s ease',
     }}>
 
-      {/* Botón volver — desliza desde la izquierda */}
+      {/* Botón volver */}
       <div style={{
         padding: '52px 20px 0',
         opacity: entered ? 1 : 0,
         transform: entered ? 'translateX(0)' : 'translateX(-16px)',
         transition: 'opacity 0.3s ease, transform 0.3s ease',
       }}>
-        <button
-          onClick={handleBack}
-          style={{
-            display: 'flex', alignItems: 'center', gap: '6px',
-            background: 'none', border: 'none', cursor: 'pointer',
-            fontFamily: 'var(--font)', fontSize: '13px', fontWeight: '700',
-            color: 'var(--color-text-muted)', padding: 0,
-          }}
-        >
-          <ArrowLeft size={16} strokeWidth={2.5} />
-          Volver
+        <button onClick={handleBack} style={{
+          display: 'flex', alignItems: 'center', gap: '6px',
+          background: 'none', border: 'none', cursor: 'pointer',
+          fontFamily: 'var(--font)', fontSize: '13px', fontWeight: '700',
+          color: 'var(--color-text-muted)', padding: 0,
+        }}>
+          <ArrowLeft size={16} strokeWidth={2.5} /> Volver
         </button>
       </div>
 
-      {/* Nota principal — sube desde abajo y se "clava" con spring */}
+      {/* Nota principal */}
       <div style={{ padding: '0 24px', marginTop: '20px' }}>
         <div style={{
           position: 'relative',
@@ -194,22 +223,17 @@ export default function NoteDetail() {
           transform: entered
             ? `translateY(0) rotate(${noteRotation}deg)`
             : `translateY(50px) rotate(${noteRotation - 4}deg)`,
-          // cubic-bezier spring: sube y rebota un poco al final, como al clavar una chincheta
           transition: 'opacity 0.4s ease, transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1)',
         }}>
-
-          {/* Tape */}
           <div style={{
             position: 'absolute', top: '-11px', left: '50%',
             transform: 'translateX(-50%) rotate(-1deg)',
             width: '64px', height: '22px',
             backgroundColor: 'rgba(255,235,140,0.88)',
             border: '1px solid rgba(180,150,30,0.2)',
-            zIndex: 1,
-            boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
+            zIndex: 1, boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
           }} />
 
-          {/* Card */}
           <div style={{
             backgroundColor: 'var(--color-white)',
             border: '1px solid var(--color-border)',
@@ -217,8 +241,6 @@ export default function NoteDetail() {
             boxShadow: '3px 5px 14px rgba(0,0,0,0.14)',
             marginTop: '12px',
           }}>
-
-            {/* Título con typewriter + icono categoría */}
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '10px', marginBottom: '12px' }}>
               <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--color-text)', lineHeight: '1.3', flex: 1, margin: 0, minHeight: '24px' }}>
                 {titleDisplayed}<Cursor visible={!titleDone} />
@@ -226,24 +248,19 @@ export default function NoteDetail() {
               <CategoryIcon size={20} color={categoryColor} strokeWidth={2} style={{ flexShrink: 0, marginTop: '2px' }} />
             </div>
 
-            {/* Descripción — aparece cuando el título termina */}
             <p style={{
               fontSize: '14px', color: 'var(--color-text-muted)', lineHeight: '1.6', marginBottom: '20px',
-              opacity: titleDone ? 1 : 0,
-              transition: 'opacity 0.4s ease',
+              opacity: titleDone ? 1 : 0, transition: 'opacity 0.4s ease',
             }}>
               {note.description}
             </p>
 
-            {/* Separador */}
             <div style={{ borderTop: '1px solid var(--color-border)', marginBottom: '12px' }} />
 
-            {/* Footer */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{
-                  width: '30px', height: '30px',
-                  backgroundColor: 'var(--color-accent)',
+                  width: '30px', height: '30px', backgroundColor: 'var(--color-accent)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   color: 'white', fontFamily: 'var(--font-display)', fontSize: '16px',
                 }}>
@@ -259,24 +276,42 @@ export default function NoteDetail() {
                   <p style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>{timeAgo(note.created_at)}</p>
                 </div>
               </div>
-              {note.is_completed && (
-                <span style={{
-                  border: '1.5px solid var(--color-border)', color: 'var(--color-text)',
-                  fontSize: '10px', fontWeight: '700', padding: '2px 8px',
-                  textTransform: 'uppercase', letterSpacing: '0.5px',
-                }}>
-                  Completada
-                </span>
-              )}
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {completed && (
+                  <span style={{
+                    border: '1.5px solid var(--color-border)', color: 'var(--color-text)',
+                    fontSize: '10px', fontWeight: '700', padding: '2px 8px',
+                    textTransform: 'uppercase', letterSpacing: '0.5px',
+                  }}>
+                    Completada
+                  </span>
+                )}
+                {/* Botón dar por resuelta — solo autor, solo si no está completada */}
+                {isAuthor && !completed && (
+                  <button
+                    onClick={openModal}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '5px',
+                      backgroundColor: 'var(--color-accent)', color: 'white',
+                      border: 'none', fontFamily: 'var(--font)',
+                      fontSize: '11px', fontWeight: '700',
+                      padding: '5px 12px', cursor: 'pointer',
+                      textTransform: 'uppercase', letterSpacing: '0.5px',
+                    }}
+                  >
+                    <CheckCircle size={13} strokeWidth={2.5} />
+                    Resolver
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Sección comentarios */}
+      {/* Comentarios */}
       <div style={{ padding: '0 24px', marginTop: '36px' }}>
-
-        {/* Label "Respuestas" — aparece tras la nota */}
         <p style={{
           fontSize: '11px', fontWeight: '700', color: 'var(--color-text-muted)',
           textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px',
@@ -289,50 +324,34 @@ export default function NoteDetail() {
         {comments.length === 0 && (
           <p style={{
             fontSize: '13px', color: 'var(--color-text-muted)', textAlign: 'center', marginBottom: '24px',
-            opacity: entered ? 1 : 0,
-            transition: `opacity 0.3s ease ${commentsBaseDelay}s`,
+            opacity: entered ? 1 : 0, transition: `opacity 0.3s ease ${commentsBaseDelay}s`,
           }}>
             Sin respuestas todavía. ¡Sé el primero!
           </p>
         )}
 
-        {/* Post-its de comentarios — cascada con delay incremental */}
         {comments.map((comment, index) => {
           const commentInitial = comment.user?.name?.charAt(0).toUpperCase() || '?';
           const rotation = COMMENT_ROTATIONS[index % COMMENT_ROTATIONS.length];
           const delay = `${commentsBaseDelay + index * 0.14}s`;
-
           return (
-            <div
-              key={comment.id}
-              style={{
-                position: 'relative',
-                marginTop: '16px',
-                marginBottom: '20px',
-                opacity: entered ? 1 : 0,
-                transform: entered
-                  ? `rotate(${rotation}deg)`
-                  : `translateY(30px) rotate(${rotation - 2}deg)`,
-                transition: `opacity 0.35s ease ${delay}, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}`,
-                transformOrigin: 'center top',
-              }}
-            >
-              {/* Tape */}
+            <div key={comment.id} style={{
+              position: 'relative', marginTop: '16px', marginBottom: '20px',
+              opacity: entered ? 1 : 0,
+              transform: entered ? `rotate(${rotation}deg)` : `translateY(30px) rotate(${rotation - 2}deg)`,
+              transition: `opacity 0.35s ease ${delay}, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}`,
+              transformOrigin: 'center top',
+            }}>
               <div style={{
                 position: 'absolute', top: '-9px', left: '50%',
                 transform: 'translateX(-50%) rotate(-1.5deg)',
                 width: '44px', height: '16px',
                 backgroundColor: 'rgba(255,235,140,0.88)',
-                border: '1px solid rgba(180,150,30,0.2)',
-                zIndex: 1,
+                border: '1px solid rgba(180,150,30,0.2)', zIndex: 1,
               }} />
-
-              {/* Post-it amarillo */}
               <div style={{
-                backgroundColor: '#FEFCE8',
-                border: '1px solid rgba(180,160,0,0.2)',
-                padding: '16px 16px 14px',
-                boxShadow: '2px 4px 10px rgba(0,0,0,0.1)',
+                backgroundColor: '#FEFCE8', border: '1px solid rgba(180,160,0,0.2)',
+                padding: '16px 16px 14px', boxShadow: '2px 4px 10px rgba(0,0,0,0.1)',
               }}>
                 <p style={{ fontSize: '13px', color: 'var(--color-text)', lineHeight: '1.55', marginBottom: '12px' }}>
                   {comment.text}
@@ -359,13 +378,12 @@ export default function NoteDetail() {
           );
         })}
 
-        {/* Post-it para escribir — aparece el último */}
+        {/* Post-it escribir comentario */}
         {(() => {
           const delay = `${commentsBaseDelay + comments.length * 0.14 + 0.05}s`;
           return (
             <div style={{
-              position: 'relative',
-              marginTop: '24px',
+              position: 'relative', marginTop: '24px',
               opacity: entered ? 1 : 0,
               transform: entered ? 'rotate(0.5deg)' : 'translateY(30px) rotate(-1.5deg)',
               transition: `opacity 0.35s ease ${delay}, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}`,
@@ -375,14 +393,11 @@ export default function NoteDetail() {
                 transform: 'translateX(-50%) rotate(-2deg)',
                 width: '44px', height: '16px',
                 backgroundColor: 'rgba(255,235,140,0.88)',
-                border: '1px solid rgba(180,150,30,0.2)',
-                zIndex: 1,
+                border: '1px solid rgba(180,150,30,0.2)', zIndex: 1,
               }} />
               <div style={{
-                backgroundColor: '#FEFCE8',
-                border: '1px solid rgba(180,160,0,0.25)',
-                padding: '16px',
-                boxShadow: '2px 4px 10px rgba(0,0,0,0.1)',
+                backgroundColor: '#FEFCE8', border: '1px solid rgba(180,160,0,0.25)',
+                padding: '16px', boxShadow: '2px 4px 10px rgba(0,0,0,0.1)',
               }}>
                 <textarea
                   placeholder="Escribe tu respuesta..."
@@ -392,26 +407,20 @@ export default function NoteDetail() {
                   style={{
                     width: '100%', border: 'none',
                     borderBottom: '1px solid rgba(180,160,0,0.3)',
-                    backgroundColor: 'transparent',
-                    fontFamily: 'var(--font)', fontSize: '13px',
-                    color: 'var(--color-text)', resize: 'none', outline: 'none',
-                    lineHeight: '1.6', paddingBottom: '8px', marginBottom: '12px',
-                    boxSizing: 'border-box',
+                    backgroundColor: 'transparent', fontFamily: 'var(--font)',
+                    fontSize: '13px', color: 'var(--color-text)', resize: 'none',
+                    outline: 'none', lineHeight: '1.6', paddingBottom: '8px',
+                    marginBottom: '12px', boxSizing: 'border-box',
                   }}
                 />
                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <button
-                    disabled={!newComment.trim()}
-                    style={{
-                      backgroundColor: 'var(--color-accent)', color: 'white',
-                      border: 'none', fontFamily: 'var(--font)',
-                      fontSize: '12px', fontWeight: '700',
-                      padding: '7px 18px', cursor: newComment.trim() ? 'pointer' : 'default',
-                      textTransform: 'uppercase', letterSpacing: '0.5px',
-                      opacity: newComment.trim() ? 1 : 0.45,
-                      transition: 'opacity 0.2s',
-                    }}
-                  >
+                  <button disabled={!newComment.trim()} style={{
+                    backgroundColor: 'var(--color-accent)', color: 'white',
+                    border: 'none', fontFamily: 'var(--font)', fontSize: '12px', fontWeight: '700',
+                    padding: '7px 18px', cursor: newComment.trim() ? 'pointer' : 'default',
+                    textTransform: 'uppercase', letterSpacing: '0.5px',
+                    opacity: newComment.trim() ? 1 : 0.45, transition: 'opacity 0.2s',
+                  }}>
                     Publicar
                   </button>
                 </div>
@@ -419,11 +428,159 @@ export default function NoteDetail() {
             </div>
           );
         })()}
-
       </div>
-
     </div>
+
     <MenuBar active="home" />
+
+    {/* Modal resolver nota */}
+    {showModal && (
+      <>
+        {/* Overlay */}
+        <div
+          onClick={closeModal}
+          style={{
+            position: 'fixed', inset: 0,
+            backgroundColor: modalEntered ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0)',
+            transition: 'background-color 0.3s ease',
+            zIndex: 200,
+          }}
+        />
+
+        {/* Panel */}
+        <div style={{
+          position: 'fixed', bottom: 0,
+          left: '50%', transform: `translateX(-50%) translateY(${modalEntered ? '0' : '100%'})`,
+          width: '100%', maxWidth: '390px',
+          backgroundColor: 'var(--color-white)',
+          border: '1px solid var(--color-border)',
+          borderBottom: 'none',
+          padding: '28px 20px 48px',
+          zIndex: 201,
+          transition: 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        }}>
+
+          {/* Tape */}
+          <div style={{
+            position: 'absolute', top: '-10px', left: '50%',
+            transform: 'translateX(-50%) rotate(-1deg)',
+            width: '54px', height: '18px',
+            backgroundColor: 'rgba(255,235,140,0.88)',
+            border: '1px solid rgba(180,150,30,0.2)',
+          }} />
+
+          <p style={{
+            fontSize: '16px', fontWeight: '700', color: 'var(--color-text)',
+            marginBottom: '6px',
+          }}>
+            ¿Quieres agradecer a alguien?
+          </p>
+          <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', marginBottom: '20px' }}>
+            Pulsa el corazón para dar las gracias
+          </p>
+
+          {/* Lista de usuarios */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '16px' }}>
+            {modalUsers.length === 0 && (
+              <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', textAlign: 'center', padding: '12px 0' }}>
+                Nadie ha comentado todavía
+              </p>
+            )}
+            {modalUsers.map((user) => {
+              const isLiked = thankedUsers.includes(user.id);
+              return (
+                <div key={user.id} style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '10px 14px',
+                  backgroundColor: isLiked ? '#FFF1F2' : 'var(--color-bg)',
+                  border: `1px solid ${isLiked ? '#DD686D' : 'var(--color-border)'}`,
+                  transition: 'all 0.15s',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{
+                      width: '32px', height: '32px', backgroundColor: 'var(--color-accent)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: 'white', fontFamily: 'var(--font-display)', fontSize: '16px',
+                    }}>
+                      {user.name.charAt(0)}
+                    </div>
+                    <div>
+                      <p style={{ fontSize: '13px', fontWeight: '700', color: 'var(--color-text)' }}>{user.name}</p>
+                      {user.floor && (
+                        <p style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>{user.floor}º{user.door}</p>
+                      )}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => toggleThanks(user.id)}
+                    style={{
+                      background: 'none', border: 'none', cursor: 'pointer', padding: '4px',
+                    }}
+                  >
+                    <Heart
+                      size={22} strokeWidth={2}
+                      color="#DD686D"
+                      fill={isLiked ? '#DD686D' : 'none'}
+                    />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Toggle buscar en comunidad */}
+          <button
+            onClick={() => setShowCommunity((s) => !s)}
+            style={{
+              background: 'none', border: 'none', cursor: 'pointer',
+              fontFamily: 'var(--font)', fontSize: '12px', fontWeight: '700',
+              color: 'var(--color-accent)', padding: 0,
+              textDecoration: 'underline', marginBottom: '24px',
+              display: 'block',
+            }}
+          >
+            {showCommunity ? '← Solo comentadores' : 'Buscar en comunidad →'}
+          </button>
+
+          {/* Botón resolver */}
+          <button
+            onClick={handleResolve}
+            style={{
+              width: '100%', height: '46px',
+              backgroundColor: 'var(--color-accent)', color: 'white',
+              border: 'none', fontFamily: 'var(--font)',
+              fontSize: '14px', fontWeight: '700', cursor: 'pointer',
+              textTransform: 'uppercase', letterSpacing: '0.5px',
+              transition: 'opacity 0.15s',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.88'}
+            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+          >
+            {thankedUsers.length > 0 ? 'Resolver y agradecer' : 'Resolver'}
+          </button>
+
+        </div>
+      </>
+    )}
+
+    {/* Toast */}
+    {showToast && (
+      <div style={{
+        position: 'fixed', top: '24px', left: '50%',
+        transform: 'translateX(-50%)',
+        backgroundColor: 'var(--color-text)', color: 'white',
+        padding: '10px 20px',
+        fontFamily: 'var(--font)', fontSize: '13px', fontWeight: '700',
+        zIndex: 300,
+        opacity: toastVisible ? 1 : 0,
+        transition: 'opacity 0.3s ease',
+        display: 'flex', alignItems: 'center', gap: '8px',
+        whiteSpace: 'nowrap',
+      }}>
+        <CheckCircle size={15} strokeWidth={2.5} color="#68DD9E" />
+        Nota resuelta
+      </div>
+    )}
     </>
   );
 }
