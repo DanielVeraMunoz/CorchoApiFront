@@ -250,7 +250,9 @@ export default function NoteDetail() {
                 <div>
                   <p
                     onClick={() => navigate(`/users/${note.user?.id}`)}
-                    style={{ fontSize: '12px', fontWeight: '600', color: 'var(--color-text)', cursor: 'pointer', textDecoration: 'underline' }}
+                    onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                    onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+                    style={{ fontSize: '12px', fontWeight: '600', color: 'var(--color-text)', cursor: 'pointer' }}
                   >{note.user?.name}</p>
                   <p style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>{timeAgo(note.created_at)}</p>
                 </div>
@@ -344,7 +346,9 @@ export default function NoteDetail() {
                   <p style={{ fontSize: '11px', fontWeight: '600', color: 'var(--color-text-muted)' }}>
                     <span
                       onClick={(e) => { e.stopPropagation(); navigate(`/users/${comment.user?.id}`); }}
-                      style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                      onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                      onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+                      style={{ cursor: 'pointer' }}
                     >{comment.user?.name}</span> · {timeAgo(comment.created_at)}
                   </p>
                 </div>
