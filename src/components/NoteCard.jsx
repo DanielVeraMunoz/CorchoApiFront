@@ -146,8 +146,8 @@ export default function NoteCard({ note, onClick }) {
               alignItems: 'center',
               justifyContent: 'center',
               color: 'white',
-              fontWeight: '700',
-              fontSize: '13px',
+              fontFamily: 'var(--font-display)',
+              fontSize: '15px',
               flexShrink: 0,
             }}>
               {initial}
