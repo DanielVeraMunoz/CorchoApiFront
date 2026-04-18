@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, Star, Pencil, Megaphone, CalendarDays, ShoppingBag, LayoutGrid } from 'lucide-react';
+import { ArrowLeft, Heart, Star, Pencil, Trash2, Megaphone, CalendarDays, ShoppingBag, LayoutGrid } from 'lucide-react';
 import MenuBar from '../components/MenuBar';
 
-// En producción esto vendrá del contexto de autenticación
 const MY_USER_ID = 2;
+const IS_ADMIN = false;
 
 const MOCK_USERS = [
-  { id: 1, name: 'Ana García', role: 'admin', floor: '1', door: 'A', community: { name: 'Los Pinos 42' }, created_at: '2024-01-15', thanks_count: 12, is_top_helper: true },
-  { id: 2, name: 'Carlos M.',  role: 'user',  floor: '3', door: 'B', community: { name: 'Los Pinos 42' }, created_at: '2024-02-20', thanks_count: 5,  is_top_helper: false },
-  { id: 3, name: 'Laura P.',   role: 'user',  floor: '2', door: 'C', community: { name: 'Los Pinos 42' }, created_at: '2024-03-10', thanks_count: 8,  is_top_helper: true },
-  { id: 4, name: 'John Doe',   role: 'user',  floor: '4', door: 'A', community: { name: 'Los Pinos 42' }, created_at: '2024-04-05', thanks_count: 3,  is_top_helper: false },
+  { id: 1, name: 'Ana García', email: 'ana@corcho.com',    role: 'admin', floor: '1', door: 'A', community: { name: 'Los Pinos 42' }, created_at: '2024-01-15', thanks_count: 12, is_top_helper: true },
+  { id: 2, name: 'Carlos M.',  email: 'carlos@corcho.com', role: 'user',  floor: '3', door: 'B', community: { name: 'Los Pinos 42' }, created_at: '2024-02-20', thanks_count: 5,  is_top_helper: false },
+  { id: 3, name: 'Laura P.',   email: 'laura@corcho.com',  role: 'user',  floor: '2', door: 'C', community: { name: 'Los Pinos 42' }, created_at: '2024-03-10', thanks_count: 8,  is_top_helper: true },
+  { id: 4, name: 'John Doe',   email: 'john@corcho.com',   role: 'user',  floor: '4', door: 'A', community: { name: 'Los Pinos 42' }, created_at: '2024-04-05', thanks_count: 3,  is_top_helper: false },
 ];
 
 const MOCK_USER_NOTES = {
@@ -91,6 +91,16 @@ export default function UserProfile() {
   const [entered, setEntered] = useState(false);
   const [exiting, setExiting] = useState(false);
 
+  const [isEditing, setIsEditing]             = useState(false);
+  const [editEntered, setEditEntered]         = useState(false);
+  const [editName, setEditName]               = useState('');
+  const [editEmail, setEditEmail]             = useState('');
+  const [editPassword, setEditPassword]       = useState('');
+  const [editFloor, setEditFloor]             = useState('');
+  const [editDoor, setEditDoor]               = useState('');
+  const [editRole, setEditRole]               = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
   useEffect(() => {
     const t = setTimeout(() => setEntered(true), 50);
     return () => clearTimeout(t);
@@ -120,6 +130,50 @@ export default function UserProfile() {
 
   const initial = user.name.charAt(0).toUpperCase();
   const cardRotation = user.id % 2 === 0 ? 0.8 : -1;
+
+  const labelStyle = {
+    fontSize: '11px', fontWeight: '700', color: 'var(--color-text-muted)',
+    textTransform: 'uppercase', letterSpacing: '0.6px', marginBottom: '4px',
+  };
+  const inputStyle = {
+    width: '100%', border: 'none', borderBottom: '1px solid var(--color-border-light)',
+    backgroundColor: 'transparent', fontFamily: 'var(--font)',
+    fontSize: '13px', fontWeight: '600', color: 'var(--color-text)',
+    outline: 'none', padding: '0 0 4px', boxSizing: 'border-box',
+  };
+  const canEdit = isOwnProfile || IS_ADMIN;
+
+  const startEdit = () => {
+    setEditName(user.name);
+    setEditEmail(user.email);
+    setEditPassword('');
+    setEditFloor(user.floor);
+    setEditDoor(user.door);
+    setEditRole(user.role);
+    setIsEditing(true);
+    setTimeout(() => setEditEntered(true), 20);
+  };
+
+  const cancelEdit = () => {
+    setEditEntered(false);
+    setTimeout(() => { setIsEditing(false); setShowDeleteConfirm(false); }, 250);
+  };
+
+  const handleSave = () => {
+    // TODO: llamada PUT /api/users/:id
+    user.name  = editName;
+    user.email = editEmail;
+    user.floor = editFloor;
+    user.door  = editDoor;
+    user.role  = editRole;
+    setEditEntered(false);
+    setTimeout(() => setIsEditing(false), 250);
+  };
+
+  const handleDelete = () => {
+    // TODO: llamada DELETE /api/users/:id
+    navigate('/dashboard');
+  };
 
   return (
     <>
@@ -157,9 +211,10 @@ export default function UserProfile() {
           position: 'relative',
           opacity: entered ? 1 : 0,
           transform: entered
-            ? `translateY(0) rotate(${cardRotation}deg)`
+            ? `translateY(${isEditing ? '-4px' : '0'}) rotate(${isEditing ? '0' : cardRotation}deg) scale(${isEditing ? '1.02' : '1'})`
             : `translateY(50px) rotate(${cardRotation - 4}deg)`,
-          transition: 'opacity 0.4s ease, transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          transition: 'opacity 0.4s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          boxShadow: isEditing ? '6px 12px 28px rgba(0,0,0,0.18)' : 'none',
         }}>
 
           {/* Tape */}
@@ -181,19 +236,16 @@ export default function UserProfile() {
             position: 'relative',
           }}>
 
-            {/* Botón editar — solo en perfil propio */}
-            {isOwnProfile && (
-              <button
-                onClick={() => {}}
-                style={{
-                  position: 'absolute', top: '16px', right: '16px',
-                  background: 'none', border: '1px solid var(--color-border)',
-                  padding: '5px 10px', cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', gap: '5px',
-                  fontFamily: 'var(--font)', fontSize: '11px', fontWeight: '700',
-                  color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px',
-                }}
-              >
+            {/* Botón editar — solo en modo lectura */}
+            {canEdit && !isEditing && (
+              <button onClick={startEdit} style={{
+                position: 'absolute', top: '16px', right: '16px',
+                background: 'none', border: '1px solid var(--color-border)',
+                padding: '5px 10px', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', gap: '5px',
+                fontFamily: 'var(--font)', fontSize: '11px', fontWeight: '700',
+                color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px',
+              }}>
                 <Pencil size={12} strokeWidth={2.5} />
                 Editar
               </button>
@@ -207,12 +259,30 @@ export default function UserProfile() {
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 color: 'white', fontFamily: 'var(--font-display)', fontSize: '28px',
               }}>
-                {initial}
+                {isEditing ? editName.charAt(0).toUpperCase() || initial : initial}
               </div>
-              <div>
-                <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--color-text)', margin: 0, minHeight: '26px' }}>
-                  {nameDisplayed}<Cursor visible={!nameDone} />
-                </h2>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                {isEditing ? (
+                  <input
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    autoFocus
+                    maxLength={50}
+                    style={{
+                      width: '100%', border: 'none', borderBottom: '1.5px solid var(--color-accent)',
+                      backgroundColor: 'transparent', fontFamily: 'var(--font)',
+                      fontSize: '18px', fontWeight: '700', color: 'var(--color-text)',
+                      outline: 'none', padding: '0 0 4px', boxSizing: 'border-box',
+                      opacity: editEntered ? 1 : 0,
+                      transform: editEntered ? 'translateY(0)' : 'translateY(8px)',
+                      transition: 'opacity 0.25s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                    }}
+                  />
+                ) : (
+                  <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--color-text)', margin: 0, minHeight: '26px' }}>
+                    {nameDisplayed}<Cursor visible={!nameDone} />
+                  </h2>
+                )}
                 <p style={{
                   fontSize: '11px', fontWeight: '700', color: user.role === 'admin' ? 'var(--color-accent)' : 'var(--color-text-muted)',
                   textTransform: 'uppercase', letterSpacing: '0.8px', marginTop: '3px',
@@ -224,49 +294,138 @@ export default function UserProfile() {
             </div>
 
             {/* Datos */}
-            <div style={{
-              opacity: nameDone ? 1 : 0, transition: 'opacity 0.4s ease 0.1s',
-            }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
-                {[
-                  { label: 'Piso / Puerta', value: `${user.floor}º ${user.door}` },
-                  { label: 'Comunidad',     value: user.community.name },
-                  { label: 'Vecino desde',  value: formatMemberSince(user.created_at) },
-                ].map(({ label, value }) => (
-                  <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.6px' }}>
-                      {label}
-                    </span>
-                    <span style={{ fontSize: '13px', fontWeight: '600', color: 'var(--color-text)' }}>
-                      {value}
-                    </span>
-                  </div>
-                ))}
+            <div style={{ opacity: nameDone ? 1 : 0, transition: 'opacity 0.4s ease 0.1s' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '16px' }}>
+                {isEditing ? (
+                  <>
+                    {/* Email */}
+                    <div style={{ animEntry: 0.06, opacity: editEntered ? 1 : 0, transform: editEntered ? 'translateY(0)' : 'translateY(8px)', transition: 'opacity 0.25s ease 0.06s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1) 0.06s' }}>
+                      <p style={labelStyle}>Email</p>
+                      <input type="email" value={editEmail} onChange={(e) => setEditEmail(e.target.value)} style={inputStyle} />
+                    </div>
+
+                    {/* Contraseña */}
+                    <div style={{ opacity: editEntered ? 1 : 0, transform: editEntered ? 'translateY(0)' : 'translateY(8px)', transition: 'opacity 0.25s ease 0.1s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1) 0.1s' }}>
+                      <p style={labelStyle}>Nueva contraseña <span style={{ fontWeight: '400', textTransform: 'none' }}>(opcional)</span></p>
+                      <input type="password" placeholder="••••••••" value={editPassword} onChange={(e) => setEditPassword(e.target.value)} style={inputStyle} />
+                    </div>
+
+                    {/* Piso y Puerta */}
+                    <div style={{ display: 'flex', gap: '12px', opacity: editEntered ? 1 : 0, transform: editEntered ? 'translateY(0)' : 'translateY(8px)', transition: 'opacity 0.25s ease 0.14s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1) 0.14s' }}>
+                      <div style={{ flex: 1 }}>
+                        <p style={labelStyle}>Piso</p>
+                        <input value={editFloor} onChange={(e) => setEditFloor(e.target.value)} maxLength={3} style={inputStyle} />
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <p style={labelStyle}>Puerta</p>
+                        <input value={editDoor} onChange={(e) => setEditDoor(e.target.value)} maxLength={3} style={inputStyle} />
+                      </div>
+                    </div>
+
+                    {/* Rol — solo admin puede cambiar */}
+                    {IS_ADMIN && (
+                      <div style={{ opacity: editEntered ? 1 : 0, transform: editEntered ? 'translateY(0)' : 'translateY(8px)', transition: 'opacity 0.25s ease 0.18s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1) 0.18s' }}>
+                        <p style={labelStyle}>Rol</p>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          {['user', 'admin'].map((r) => (
+                            <button
+                              key={r}
+                              onClick={() => setEditRole(r)}
+                              style={{
+                                padding: '5px 14px', border: `1px solid ${editRole === r ? 'var(--color-accent)' : 'var(--color-border)'}`,
+                                backgroundColor: editRole === r ? 'var(--color-accent)' : 'transparent',
+                                color: editRole === r ? 'white' : 'var(--color-text-muted)',
+                                fontFamily: 'var(--font)', fontSize: '12px', fontWeight: '700',
+                                cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.5px',
+                              }}
+                            >
+                              {r === 'admin' ? 'Presidente' : 'Vecino'}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Botón eliminar */}
+                    <button
+                      onClick={() => setShowDeleteConfirm(true)}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: '5px',
+                        background: 'none', border: 'none', cursor: 'pointer',
+                        fontFamily: 'var(--font)', fontSize: '12px', fontWeight: '700',
+                        color: '#DD686D', padding: '4px 0 0',
+                        opacity: editEntered ? 1 : 0,
+                        transform: editEntered ? 'translateY(0)' : 'translateY(8px)',
+                        transition: 'opacity 0.25s ease 0.22s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1) 0.22s',
+                      }}
+                    >
+                      <Trash2 size={13} strokeWidth={2.5} />
+                      Eliminar cuenta
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    {[
+                      { label: 'Email',         value: user.email },
+                      { label: 'Piso / Puerta', value: `${user.floor}º ${user.door}` },
+                      { label: 'Comunidad',     value: user.community.name },
+                      { label: 'Vecino desde',  value: formatMemberSince(user.created_at) },
+                    ].map(({ label, value }) => (
+                      <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.6px' }}>
+                          {label}
+                        </span>
+                        <span style={{ fontSize: '13px', fontWeight: '600', color: 'var(--color-text)' }}>
+                          {value}
+                        </span>
+                      </div>
+                    ))}
+                  </>
+                )}
               </div>
 
               <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-
-                {/* Agradecimientos */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Heart size={16} color="#DD686D" strokeWidth={2} fill="#DD686D" />
-                  <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--color-text)' }}>
-                    {user.thanks_count} agradecimientos
-                  </span>
-                </div>
-
-                {/* Badge top helper */}
-                {user.is_top_helper && (
-                  <div style={{
-                    display: 'flex', alignItems: 'center', gap: '4px',
-                    backgroundColor: '#FEF9C3',
-                    border: '1px solid rgba(180,160,0,0.3)',
-                    padding: '4px 10px',
-                  }}>
-                    <Star size={12} color="#DDC068" fill="#DDC068" strokeWidth={2} />
-                    <span style={{ fontSize: '10px', fontWeight: '700', color: '#92680A', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      Top del mes
-                    </span>
+                {isEditing ? (
+                  <div style={{ display: 'flex', gap: '8px', marginLeft: 'auto' }}>
+                    <button onClick={cancelEdit} style={{
+                      background: 'none', border: '1px solid var(--color-border)',
+                      fontFamily: 'var(--font)', fontSize: '11px', fontWeight: '700',
+                      color: 'var(--color-text-muted)', padding: '5px 12px', cursor: 'pointer',
+                    }}>
+                      Cancelar
+                    </button>
+                    <button onClick={handleSave} disabled={!editName.trim()} style={{
+                      backgroundColor: editName.trim() ? 'var(--color-accent)' : 'var(--color-border-light)',
+                      color: editName.trim() ? 'white' : 'var(--color-text-muted)',
+                      border: 'none', fontFamily: 'var(--font)', fontSize: '11px', fontWeight: '700',
+                      padding: '5px 12px', cursor: editName.trim() ? 'pointer' : 'default',
+                      textTransform: 'uppercase', letterSpacing: '0.5px',
+                    }}>
+                      Guardar
+                    </button>
                   </div>
+                ) : (
+                  <>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Heart size={16} color="#DD686D" strokeWidth={2} fill="#DD686D" />
+                      <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--color-text)' }}>
+                        {user.thanks_count} agradecimientos
+                      </span>
+                    </div>
+                    {user.is_top_helper && (
+                      <div style={{
+                        display: 'flex', alignItems: 'center', gap: '4px',
+                        backgroundColor: '#FEF9C3',
+                        border: '1px solid rgba(180,160,0,0.3)',
+                        padding: '4px 10px',
+                      }}>
+                        <Star size={12} color="#DDC068" fill="#DDC068" strokeWidth={2} />
+                        <span style={{ fontSize: '10px', fontWeight: '700', color: '#92680A', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          Top del mes
+                        </span>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </div>
@@ -350,6 +509,65 @@ export default function UserProfile() {
 
     </div>
     <MenuBar active="profile" />
+
+    {/* Confirmación eliminar cuenta */}
+    {showDeleteConfirm && (
+      <>
+        <div
+          onClick={() => setShowDeleteConfirm(false)}
+          style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 200 }}
+        />
+        <div style={{
+          position: 'fixed', top: '50%', left: '50%',
+          transform: 'translateX(-50%) translateY(-50%) rotate(-0.5deg)',
+          width: 'calc(100% - 80px)', maxWidth: '300px',
+          backgroundColor: 'var(--color-white)',
+          border: '1px solid var(--color-border)',
+          padding: '28px 20px 24px',
+          zIndex: 201,
+          boxShadow: '4px 8px 24px rgba(0,0,0,0.18)',
+        }}>
+          <div style={{
+            position: 'absolute', top: '-10px', left: '50%',
+            transform: 'translateX(-50%) rotate(-1.5deg)',
+            width: '44px', height: '16px',
+            backgroundColor: 'rgba(255,235,140,0.88)',
+            border: '1px solid rgba(180,150,30,0.2)',
+          }} />
+          <p style={{ fontSize: '15px', fontWeight: '700', color: 'var(--color-text)', marginBottom: '8px' }}>
+            ¿Eliminar cuenta?
+          </p>
+          <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', marginBottom: '24px', lineHeight: '1.5' }}>
+            Se borrará permanentemente y no se puede deshacer.
+          </p>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button
+              onClick={() => setShowDeleteConfirm(false)}
+              style={{
+                flex: 1, height: '40px', background: 'none',
+                border: '1px solid var(--color-border)',
+                fontFamily: 'var(--font)', fontSize: '12px', fontWeight: '700',
+                color: 'var(--color-text-muted)', cursor: 'pointer',
+              }}
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={handleDelete}
+              style={{
+                flex: 1, height: '40px',
+                backgroundColor: '#DD686D', color: 'white',
+                border: 'none', fontFamily: 'var(--font)',
+                fontSize: '12px', fontWeight: '700', cursor: 'pointer',
+                textTransform: 'uppercase', letterSpacing: '0.5px',
+              }}
+            >
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </>
+    )}
     </>
   );
 }
