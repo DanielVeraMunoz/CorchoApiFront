@@ -316,9 +316,9 @@ export default function Community() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{
                   width: '36px', height: '36px',
-                  backgroundColor: user.role === 'admin' ? 'var(--color-accent)' : 'var(--color-border)',
+                  backgroundColor: user.role === 'admin' ? 'var(--color-accent)' : '#6B7280',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: user.role === 'admin' ? 'white' : 'var(--color-text)',
+                  color: 'white',
                   fontFamily: 'var(--font-display)', fontSize: '18px',
                 }}>
                   {user.name.charAt(0)}

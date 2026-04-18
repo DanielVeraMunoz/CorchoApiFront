@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Megaphone, Users, Lightbulb, CalendarDays, HandHeart, ShoppingBag, AlertTriangle, Inbox, LayoutGrid } from 'lucide-react';
+import MenuBar from '../components/MenuBar';
 
 const CATEGORY_CONFIG = {
   'Avisos oficiales': { Icon: Megaphone,    color: '#DD686D' },
@@ -156,6 +157,7 @@ export default function NoteDetail() {
   const commentsBaseDelay = 0.65;
 
   return (
+    <>
     <div style={{
       backgroundColor: 'var(--color-bg)', minHeight: '100svh', paddingBottom: '100px',
       opacity: exiting ? 0 : 1,
@@ -421,5 +423,7 @@ export default function NoteDetail() {
       </div>
 
     </div>
+    <MenuBar active="home" />
+    </>
   );
 }
