@@ -15,6 +15,20 @@ export default function MenuBar({ active }) {
   const navigate = useNavigate();
 
   return (
+    <>
+    {/* Degradado que se funde con el fondo, siempre encima del contenido */}
+    <div style={{
+      position: 'fixed',
+      bottom: 0,
+      left: '50%',
+      transform: 'translateX(-50%)',
+      width: '100%',
+      maxWidth: '390px',
+      height: '130px',
+      background: 'linear-gradient(to bottom, transparent, var(--color-bg))',
+      pointerEvents: 'none',
+      zIndex: 99,
+    }} />
     <div style={{
       position: 'fixed',
       bottom: '20px',
@@ -63,5 +77,6 @@ export default function MenuBar({ active }) {
         );
       })}
     </div>
+    </>
   );
 }
