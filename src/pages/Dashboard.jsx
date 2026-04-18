@@ -94,7 +94,7 @@ export default function Dashboard() {
         onSelect={setSelectedCategory}
       />
 
-      <div style={{ padding: '0 18px' }}>
+      <div style={{ padding: '0 24px' }}>
         <p style={{ fontSize: '11px', fontWeight: '700', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px' }}>
           Últimas notas · {filteredNotes.length}
         </p>
