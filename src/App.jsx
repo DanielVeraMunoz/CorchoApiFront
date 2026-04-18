@@ -11,6 +11,7 @@ export default function App() {
       <Routes>
         <Route path="/"            element={<Login />} />
         <Route path="/dashboard"   element={<Dashboard />} />
+        <Route path="/notes/new"   element={<CreateNote />} />
         <Route path="/notes/:id"   element={<NoteDetail />} />
         <Route path="/users/:id"   element={<UserProfile />} />
         <Route path="/community"   element={<Community />} />

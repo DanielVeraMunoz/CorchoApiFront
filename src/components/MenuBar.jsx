@@ -39,8 +39,8 @@ export default function MenuBar({ active }) {
       borderRadius: '50px',
       display: 'flex',
       alignItems: 'center',
-      padding: '10px 28px',
-      gap: '36px',
+      padding: '10px 20px',
+      gap: '24px',
       zIndex: 100,
     }}>
       {items.map(({ key, label, Icon, path }) => {
@@ -50,14 +50,8 @@ export default function MenuBar({ active }) {
             key={key}
             onClick={() => navigate(path)}
             style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '3px',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              padding: '4px 8px',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px',
+              background: 'none', border: 'none', cursor: 'pointer', padding: '4px 6px',
             }}
           >
             <Icon
@@ -66,8 +60,7 @@ export default function MenuBar({ active }) {
               color={isActive ? 'var(--color-accent)' : 'var(--color-text-muted)'}
             />
             <span style={{
-              fontSize: '10px',
-              fontFamily: 'var(--font)',
+              fontSize: '10px', fontFamily: 'var(--font)',
               fontWeight: isActive ? '800' : '500',
               color: isActive ? 'var(--color-accent)' : 'var(--color-text-muted)',
             }}>
