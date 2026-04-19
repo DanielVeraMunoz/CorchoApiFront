@@ -4,6 +4,7 @@ import { ArrowLeft, Heart, Star, Pencil, Trash2 } from 'lucide-react';
 import MenuBar from '../components/MenuBar';
 import { timeAgo, formatMemberSince } from '../utils/helpers';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
+import Tape from '../components/Tape';
 import { CATEGORY_CONFIG, DEFAULT_CONFIG } from '../utils/categories';
 import { useTypewriter, Cursor } from '../hooks/useTypewriter.jsx';
 
@@ -166,14 +167,7 @@ export default function UserProfile() {
         }}>
 
           {/* Tape */}
-          <div style={{
-            position: 'absolute', top: '-11px', left: '50%',
-            transform: 'translateX(-50%) rotate(-1deg)',
-            width: '64px', height: '22px',
-            backgroundColor: 'rgba(255,235,140,0.88)',
-            border: '1px solid rgba(180,150,30,0.2)',
-            zIndex: 1, boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
-          }} />
+          <Tape width="64px" height="22px" rotate="-1deg" top="-11px" />
 
           <div style={{
             backgroundColor: 'var(--color-white)',

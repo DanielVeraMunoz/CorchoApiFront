@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Megaphone, Users, Lightbulb, CalendarDays, HandHeart, ShoppingBag, AlertTriangle, Inbox } from 'lucide-react';
 import MenuBar from '../components/MenuBar';
+import Tape from '../components/Tape';
 
 const CATEGORIES = [
   { id: 1, name: 'Avisos oficiales', Icon: Megaphone,    color: '#DD686D' },
@@ -121,14 +122,7 @@ export default function CreateNote() {
         }}>
 
           {/* Tape */}
-          <div style={{
-            position: 'absolute', top: '-11px', left: '50%',
-            transform: 'translateX(-50%) rotate(-1.5deg)',
-            width: '64px', height: '22px',
-            backgroundColor: 'rgba(255,235,140,0.88)',
-            border: '1px solid rgba(180,150,30,0.2)',
-            zIndex: 1, boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
-          }} />
+          <Tape width="64px" height="22px" top="-11px" />
 
           <div style={{
             backgroundColor: 'var(--color-white)',

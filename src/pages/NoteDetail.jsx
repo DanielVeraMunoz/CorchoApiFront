@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, CalendarDays, Heart, CheckCircle, Pencil, Trash2 } from 'lucide-react';
 import MenuBar from '../components/MenuBar';
+import Tape from '../components/Tape';
 import { timeAgo } from '../utils/helpers';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
 import { CATEGORY_CONFIG, DEFAULT_CONFIG } from '../utils/categories';
@@ -220,14 +221,7 @@ export default function NoteDetail() {
           transition: 'opacity 0.4s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)',
           boxShadow: isEditing ? '6px 12px 28px rgba(0,0,0,0.18)' : 'none',
         }}>
-          <div style={{
-            position: 'absolute', top: '-11px', left: '50%',
-            transform: 'translateX(-50%) rotate(-1deg)',
-            width: '64px', height: '22px',
-            backgroundColor: 'rgba(255,235,140,0.88)',
-            border: '1px solid rgba(180,150,30,0.2)',
-            zIndex: 1, boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
-          }} />
+          <Tape width="64px" height="22px" rotate="-1deg" top="-11px" />
 
           <div style={{
             backgroundColor: 'var(--color-white)',
@@ -477,13 +471,7 @@ export default function NoteDetail() {
               transition: `opacity 0.35s ease ${delay}, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}`,
               transformOrigin: 'center top',
             }}>
-              <div style={{
-                position: 'absolute', top: '-9px', left: '50%',
-                transform: 'translateX(-50%) rotate(-1.5deg)',
-                width: '44px', height: '16px',
-                backgroundColor: 'rgba(255,235,140,0.88)',
-                border: '1px solid rgba(180,150,30,0.2)', zIndex: 1,
-              }} />
+              <Tape top="-9px" />
               <div style={{
                 backgroundColor: '#FEFCE8', border: '1px solid rgba(180,160,0,0.2)',
                 padding: '16px 16px 14px', boxShadow: '2px 4px 10px rgba(0,0,0,0.1)',
@@ -523,13 +511,7 @@ export default function NoteDetail() {
               transform: entered ? 'rotate(0.5deg)' : 'translateY(30px) rotate(-1.5deg)',
               transition: `opacity 0.35s ease ${delay}, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}`,
             }}>
-              <div style={{
-                position: 'absolute', top: '-9px', left: '50%',
-                transform: 'translateX(-50%) rotate(-2deg)',
-                width: '44px', height: '16px',
-                backgroundColor: 'rgba(255,235,140,0.88)',
-                border: '1px solid rgba(180,150,30,0.2)', zIndex: 1,
-              }} />
+              <Tape top="-9px" rotate="-2deg" />
               <div style={{
                 backgroundColor: '#FEFCE8', border: '1px solid rgba(180,160,0,0.25)',
                 padding: '16px', boxShadow: '2px 4px 10px rgba(0,0,0,0.1)',
@@ -598,13 +580,7 @@ export default function NoteDetail() {
         }}>
 
           {/* Tape */}
-          <div style={{
-            position: 'absolute', top: '-10px', left: '50%',
-            transform: 'translateX(-50%) rotate(-1deg)',
-            width: '54px', height: '18px',
-            backgroundColor: 'rgba(255,235,140,0.88)',
-            border: '1px solid rgba(180,150,30,0.2)',
-          }} />
+          <Tape width="54px" height="18px" rotate="-1deg" />
 
           <p style={{
             fontSize: '16px', fontWeight: '700', color: 'var(--color-text)',

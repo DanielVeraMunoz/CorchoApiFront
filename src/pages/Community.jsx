@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart, Star } from 'lucide-react';
 import MenuBar from '../components/MenuBar';
+import Tape from '../components/Tape';
 
 // Mock que replica la estructura real de GET /api/stats/community
 const MOCK_COMMUNITY_STATS = {
@@ -143,21 +144,13 @@ export default function Community() {
                 }}
               >
                 {/* Tape */}
-                <div style={{
-                  position: 'absolute', top: '-9px', left: '50%',
-                  transform: 'translateX(-50%) rotate(-1deg)',
-                  width: '36px', height: '14px',
-                  backgroundColor: 'rgba(255,235,140,0.88)',
-                  border: '1px solid rgba(180,150,30,0.2)',
-                  zIndex: 1,
-                }} />
+                <Tape width="36px" height="14px" rotate="-1deg" top="-9px" />
 
                 <div style={{
                   backgroundColor: 'var(--color-white)',
                   border: '1px solid var(--color-border)',
                   padding: '16px 14px 14px',
                   boxShadow: '2px 4px 10px rgba(0,0,0,0.1)',
-                  marginTop: '6px',
                   textAlign: 'center',
                 }}>
                   <p style={{

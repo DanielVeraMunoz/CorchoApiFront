@@ -1,4 +1,5 @@
 import { MessageCircle } from 'lucide-react';
+import Tape from './Tape';
 import { CATEGORY_CONFIG, DEFAULT_CONFIG } from '../utils/categories';
 import { timeAgo } from '../utils/helpers';
 
@@ -59,20 +60,8 @@ export default function NoteCard({ note, onClick }) {
         </div>
       )}
 
-      {/* Celo / Tape */}
       {decorationType === 'tape' && (
-        <div style={{
-          position: 'absolute',
-          top: '-10px',
-          left: '50%',
-          transform: 'translateX(-50%) rotate(-2deg)',
-          width: '54px',
-          height: '20px',
-          backgroundColor: 'rgba(255, 235, 140, 0.82)',
-          border: '1px solid rgba(180, 150, 30, 0.2)',
-          zIndex: 2,
-          boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
-        }} />
+        <Tape width="54px" height="20px" rotate="-2deg" />
       )}
 
       {/* Tarjeta */}
