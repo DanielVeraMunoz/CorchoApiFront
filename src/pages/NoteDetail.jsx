@@ -4,6 +4,7 @@ import { ArrowLeft, CalendarDays, Heart, CheckCircle, Pencil, Trash2 } from 'luc
 import MenuBar from '../components/MenuBar';
 import { timeAgo } from '../utils/helpers';
 import { CATEGORY_CONFIG, DEFAULT_CONFIG } from '../utils/categories';
+import { useTypewriter, Cursor } from '../hooks/useTypewriter.jsx';
 
 const MY_USER_ID = 2;
 const IS_ADMIN = false;
@@ -52,34 +53,6 @@ const MOCK_ALL_USERS = [
 ];
 
 const COMMENT_ROTATIONS = [-1.5, 0.8, -0.6, 1.2, -1, 0.5];
-
-function useTypewriter(text, speed = 38, startDelay = 0) {
-  const [displayed, setDisplayed] = useState('');
-  const [done, setDone] = useState(false);
-  useEffect(() => {
-    setDisplayed(''); setDone(false);
-    let i = 0; let interval;
-    const timeout = setTimeout(() => {
-      interval = setInterval(() => {
-        i++; setDisplayed(text.slice(0, i));
-        if (i >= text.length) { setDone(true); clearInterval(interval); }
-      }, speed);
-    }, startDelay);
-    return () => { clearTimeout(timeout); clearInterval(interval); };
-  }, [text, speed, startDelay]);
-  return { displayed, done };
-}
-
-function Cursor({ visible }) {
-  const [show, setShow] = useState(true);
-  useEffect(() => {
-    if (!visible) return;
-    const t = setInterval(() => setShow((s) => !s), 500);
-    return () => clearInterval(t);
-  }, [visible]);
-  if (!visible) return null;
-  return <span style={{ opacity: show ? 1 : 0, fontWeight: 400 }}>|</span>;
-}
 
 export default function NoteDetail() {
   const { id } = useParams();

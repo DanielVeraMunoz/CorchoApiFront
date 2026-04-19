@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTypewriter, Cursor } from '../hooks/useTypewriter.jsx';
 
 const MOCK_COMMUNITIES = [
   { id: 1, name: 'Calle Mayor 42, Madrid' },
@@ -57,42 +58,7 @@ function AnimatedField({ visible, children }) {
   );
 }
 
-// Escribe el texto carácter a carácter
-function useTypewriter(text, speed = 38) {
-  const [displayed, setDisplayed] = useState('');
-  const [done, setDone] = useState(false);
 
-  useEffect(() => {
-    setDisplayed('');
-    setDone(false);
-    let i = 0;
-    const timer = setInterval(() => {
-      i++;
-      setDisplayed(text.slice(0, i));
-      if (i >= text.length) {
-        setDone(true);
-        clearInterval(timer);
-      }
-    }, speed);
-    return () => clearInterval(timer);
-  }, [text, speed]);
-
-  return { displayed, done };
-}
-
-// Cursor parpadeante que desaparece al terminar de escribir
-function Cursor({ visible }) {
-  const [show, setShow] = useState(true);
-
-  useEffect(() => {
-    if (!visible) return;
-    const t = setInterval(() => setShow((s) => !s), 500);
-    return () => clearInterval(t);
-  }, [visible]);
-
-  if (!visible) return null;
-  return <span style={{ opacity: show ? 1 : 0, fontWeight: 400 }}>|</span>;
-}
 
 export default function Login() {
   const [isLogin, setIsLogin] = useState(true);
