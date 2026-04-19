@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, CalendarDays, Heart, CheckCircle, Pencil, Trash2 } from 'lucide-react';
+import { CalendarDays, Heart, CheckCircle, Pencil, Trash2 } from 'lucide-react';
+import BackButton from '../components/BackButton';
 import MenuBar from '../components/MenuBar';
 import Tape from '../components/Tape';
 import { timeAgo } from '../utils/helpers';
@@ -201,14 +202,7 @@ export default function NoteDetail() {
         transform: entered ? 'translateX(0)' : 'translateX(-16px)',
         transition: 'opacity 0.3s ease, transform 0.3s ease',
       }}>
-        <button onClick={handleBack} style={{
-          display: 'flex', alignItems: 'center', gap: '6px',
-          background: 'none', border: 'none', cursor: 'pointer',
-          fontFamily: 'var(--font)', fontSize: '13px', fontWeight: '700',
-          color: 'var(--color-text-muted)', padding: 0,
-        }}>
-          <ArrowLeft size={16} strokeWidth={2.5} /> Volver
-        </button>
+        <BackButton onClick={handleBack} />
       </div>
 
       {/* Nota principal */}

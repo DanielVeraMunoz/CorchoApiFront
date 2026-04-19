@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, Star, Pencil, Trash2 } from 'lucide-react';
+import { Heart, Star, Pencil, Trash2 } from 'lucide-react';
+import BackButton from '../components/BackButton';
 import MenuBar from '../components/MenuBar';
 import { timeAgo, formatMemberSince } from '../utils/helpers';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
@@ -141,18 +142,7 @@ export default function UserProfile() {
         transform: entered ? 'translateX(0)' : 'translateX(-16px)',
         transition: 'opacity 0.3s ease, transform 0.3s ease',
       }}>
-        <button
-          onClick={handleBack}
-          style={{
-            display: 'flex', alignItems: 'center', gap: '6px',
-            background: 'none', border: 'none', cursor: 'pointer',
-            fontFamily: 'var(--font)', fontSize: '13px', fontWeight: '700',
-            color: 'var(--color-text-muted)', padding: 0,
-          }}
-        >
-          <ArrowLeft size={16} strokeWidth={2.5} />
-          Volver
-        </button>
+        <BackButton onClick={handleBack} />
       </div>
 
       {/* Tarjeta principal del usuario */}
