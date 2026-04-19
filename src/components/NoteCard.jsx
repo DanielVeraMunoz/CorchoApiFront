@@ -1,5 +1,6 @@
 import { MessageCircle } from 'lucide-react';
 import Tape from './Tape';
+import Avatar from './Avatar';
 import { CATEGORY_CONFIG, DEFAULT_CONFIG } from '../utils/categories';
 import { timeAgo } from '../utils/helpers';
 
@@ -105,20 +106,7 @@ export default function NoteCard({ note, onClick }) {
         {/* Footer */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{
-              width: '28px',
-              height: '28px',
-              backgroundColor: 'var(--color-accent)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontFamily: 'var(--font-display)',
-              fontSize: '15px',
-              flexShrink: 0,
-            }}>
-              {initial}
-            </div>
+            <Avatar name={note.user?.name} size={28} fontSize={15} />
             <div>
               <p style={{ fontSize: '12px', fontWeight: '600', color: 'var(--color-text)' }}>
                 {note.user?.name || 'Usuario'}

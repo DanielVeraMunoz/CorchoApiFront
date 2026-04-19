@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Heart, Star } from 'lucide-react';
 import MenuBar from '../components/MenuBar';
 import Tape from '../components/Tape';
+import Avatar from '../components/Avatar';
+import { useTypewriter, Cursor } from '../hooks/useTypewriter.jsx';
 
 // Mock que replica la estructura real de GET /api/stats/community
 const MOCK_COMMUNITY_STATS = {
@@ -31,39 +33,6 @@ const MOCK_USERS = [
 
 const MEDAL_COLORS = ['#DDC068', '#9CA3AF', '#C2844A'];
 const STAT_ROTATIONS = [-1.5, 1, -0.8, 1.2];
-
-function useTypewriter(text, speed = 38, startDelay = 0) {
-  const [displayed, setDisplayed] = useState('');
-  const [done, setDone] = useState(false);
-
-  useEffect(() => {
-    setDisplayed('');
-    setDone(false);
-    let i = 0;
-    let interval;
-    const timeout = setTimeout(() => {
-      interval = setInterval(() => {
-        i++;
-        setDisplayed(text.slice(0, i));
-        if (i >= text.length) { setDone(true); clearInterval(interval); }
-      }, speed);
-    }, startDelay);
-    return () => { clearTimeout(timeout); clearInterval(interval); };
-  }, [text, speed, startDelay]);
-
-  return { displayed, done };
-}
-
-function Cursor({ visible }) {
-  const [show, setShow] = useState(true);
-  useEffect(() => {
-    if (!visible) return;
-    const t = setInterval(() => setShow((s) => !s), 500);
-    return () => clearInterval(t);
-  }, [visible]);
-  if (!visible) return null;
-  return <span style={{ opacity: show ? 1 : 0, fontWeight: 400 }}>|</span>;
-}
 
 function formatSince(dateString) {
   return new Date(dateString).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
@@ -244,14 +213,7 @@ export default function Community() {
                   }}>
                     {index + 1}
                   </span>
-                  <div style={{
-                    width: '32px', height: '32px',
-                    backgroundColor: medalColor,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: 'white', fontFamily: 'var(--font-display)', fontSize: '16px',
-                  }}>
-                    {helper.name.charAt(0)}
-                  </div>
+                  <Avatar name={helper.name} size={32} color={medalColor} />
                   <div>
                     <p style={{ fontSize: '13px', fontWeight: '700', color: 'var(--color-text)' }}>
                       {helper.name}
@@ -307,15 +269,7 @@ export default function Community() {
               onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--color-border)'}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{
-                  width: '36px', height: '36px',
-                  backgroundColor: user.role === 'admin' ? 'var(--color-accent)' : '#6B7280',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: 'white',
-                  fontFamily: 'var(--font-display)', fontSize: '18px',
-                }}>
-                  {user.name.charAt(0)}
-                </div>
+                <Avatar name={user.name} size={36} fontSize={18} color={user.role === 'admin' ? 'var(--color-accent)' : '#6B7280'} />
                 <div>
                   <p style={{ fontSize: '13px', fontWeight: '700', color: 'var(--color-text)' }}>
                     {user.name}

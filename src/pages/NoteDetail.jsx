@@ -4,6 +4,7 @@ import { ArrowLeft, CalendarDays, Heart, CheckCircle, Pencil, Trash2 } from 'luc
 import MenuBar from '../components/MenuBar';
 import Tape from '../components/Tape';
 import { timeAgo } from '../utils/helpers';
+import Avatar from '../components/Avatar';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
 import { CATEGORY_CONFIG, DEFAULT_CONFIG } from '../utils/categories';
 import { useTypewriter, Cursor } from '../hooks/useTypewriter.jsx';
@@ -340,13 +341,7 @@ export default function NoteDetail() {
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{
-                  width: '30px', height: '30px', backgroundColor: 'var(--color-accent)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: 'white', fontFamily: 'var(--font-display)', fontSize: '16px',
-                }}>
-                  {initial}
-                </div>
+                <Avatar name={note.user?.name} size={30} />
                 <div>
                   <p
                     onClick={() => navigate(`/users/${note.user?.id}`)}
@@ -480,13 +475,7 @@ export default function NoteDetail() {
                   {comment.text}
                 </p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                  <div style={{
-                    width: '22px', height: '22px', backgroundColor: '#DDC068',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: 'white', fontFamily: 'var(--font-display)', fontSize: '13px', flexShrink: 0,
-                  }}>
-                    {commentInitial}
-                  </div>
+                  <Avatar name={comment.user?.name} size={22} color="#DDC068" fontSize={13} />
                   <p style={{ fontSize: '11px', fontWeight: '600', color: 'var(--color-text-muted)' }}>
                     <span
                       onClick={(e) => { e.stopPropagation(); navigate(`/users/${comment.user?.id}`); }}
@@ -610,13 +599,7 @@ export default function NoteDetail() {
                   transition: 'all 0.15s',
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div style={{
-                      width: '32px', height: '32px', backgroundColor: 'var(--color-accent)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      color: 'white', fontFamily: 'var(--font-display)', fontSize: '16px',
-                    }}>
-                      {user.name.charAt(0)}
-                    </div>
+                    <Avatar name={user.name} size={32} />
                     <div>
                       <p style={{ fontSize: '13px', fontWeight: '700', color: 'var(--color-text)' }}>{user.name}</p>
                       {user.floor && (

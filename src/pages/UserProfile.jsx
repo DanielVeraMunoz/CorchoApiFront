@@ -5,6 +5,7 @@ import MenuBar from '../components/MenuBar';
 import { timeAgo, formatMemberSince } from '../utils/helpers';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
 import Tape from '../components/Tape';
+import Avatar from '../components/Avatar';
 import { CATEGORY_CONFIG, DEFAULT_CONFIG } from '../utils/categories';
 import { useTypewriter, Cursor } from '../hooks/useTypewriter.jsx';
 
@@ -195,14 +196,7 @@ export default function UserProfile() {
 
             {/* Avatar + nombre */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '18px' }}>
-              <div style={{
-                width: '52px', height: '52px', flexShrink: 0,
-                backgroundColor: 'var(--color-accent)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'white', fontFamily: 'var(--font-display)', fontSize: '28px',
-              }}>
-                {isEditing ? editName.charAt(0).toUpperCase() || initial : initial}
-              </div>
+              <Avatar name={isEditing ? editName || user.name : user.name} size={52} fontSize={28} />
               <div style={{ flex: 1, minWidth: 0 }}>
                 {isEditing ? (
                   <input
