@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, CalendarDays, Heart, CheckCircle, Pencil, Trash2 } from 'lucide-react';
 import MenuBar from '../components/MenuBar';
 import { timeAgo } from '../utils/helpers';
+import DeleteConfirmModal from '../components/DeleteConfirmModal';
 import { CATEGORY_CONFIG, DEFAULT_CONFIG } from '../utils/categories';
 import { useTypewriter, Cursor } from '../hooks/useTypewriter.jsx';
 
@@ -699,68 +700,13 @@ export default function NoteDetail() {
       </>
     )}
 
-    {/* Confirmación eliminar nota */}
     {showDeleteConfirm && (
-      <>
-        <div
-          onClick={() => setShowDeleteConfirm(false)}
-          style={{
-            position: 'fixed', inset: 0,
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            zIndex: 200,
-          }}
-        />
-        <div style={{
-          position: 'fixed', top: '50%', left: '50%',
-          transform: 'translateX(-50%) translateY(-50%) rotate(-0.5deg)',
-          width: 'calc(100% - 80px)', maxWidth: '300px',
-          backgroundColor: 'var(--color-white)',
-          border: '1px solid var(--color-border)',
-          padding: '28px 20px 24px',
-          zIndex: 201,
-          boxShadow: '4px 8px 24px rgba(0,0,0,0.18)',
-        }}>
-          {/* Tape */}
-          <div style={{
-            position: 'absolute', top: '-10px', left: '50%',
-            transform: 'translateX(-50%) rotate(-1.5deg)',
-            width: '44px', height: '16px',
-            backgroundColor: 'rgba(255,235,140,0.88)',
-            border: '1px solid rgba(180,150,30,0.2)',
-          }} />
-          <p style={{ fontSize: '15px', fontWeight: '700', color: 'var(--color-text)', marginBottom: '8px' }}>
-            ¿Eliminar esta nota?
-          </p>
-          <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', marginBottom: '24px', lineHeight: '1.5' }}>
-            Se borrará permanentemente y no se puede deshacer.
-          </p>
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <button
-              onClick={() => setShowDeleteConfirm(false)}
-              style={{
-                flex: 1, height: '40px', background: 'none',
-                border: '1px solid var(--color-border)',
-                fontFamily: 'var(--font)', fontSize: '12px', fontWeight: '700',
-                color: 'var(--color-text-muted)', cursor: 'pointer',
-              }}
-            >
-              Cancelar
-            </button>
-            <button
-              onClick={handleDelete}
-              style={{
-                flex: 1, height: '40px',
-                backgroundColor: '#DD686D', color: 'white',
-                border: 'none', fontFamily: 'var(--font)',
-                fontSize: '12px', fontWeight: '700', cursor: 'pointer',
-                textTransform: 'uppercase', letterSpacing: '0.5px',
-              }}
-            >
-              Eliminar
-            </button>
-          </div>
-        </div>
-      </>
+      <DeleteConfirmModal
+        title="¿Eliminar esta nota?"
+        message="Se borrará permanentemente y no se puede deshacer."
+        onConfirm={handleDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
     )}
 
     {/* Toast */}

@@ -82,14 +82,14 @@ El front está terminado visualmente. Antes de conectar la API, limpiamos el có
 
 | Orden | Qué | Tipo | Branch sugerida | Estado |
 |---|---|---|---|---|
-| 1 | `timeAgo` → `src/utils/helpers.js` | utility | `refactor/utils` | ⬜ Pendiente |
-| 2 | `CATEGORY_CONFIG` → `src/utils/categories.js` | utility | `refactor/utils` | ⬜ Pendiente |
-| 3 | `useTypewriter` → `src/hooks/useTypewriter.js` | hook | `refactor/hooks` | ⬜ Pendiente |
-| 4 | `<Tape />` → `src/components/Tape.jsx` | componente | `refactor/components` | ⬜ Pendiente |
-| 5 | `<Avatar />` → `src/components/Avatar.jsx` | componente | `refactor/components` | ⬜ Pendiente |
-| 6 | `<BackButton />` → `src/components/BackButton.jsx` | componente | `refactor/components` | ⬜ Pendiente |
-| 7 | `<EditActions />` → `src/components/EditActions.jsx` | componente | `refactor/components` | ⬜ Pendiente |
-| 8 | `<DeleteConfirmModal />` → `src/components/DeleteConfirmModal.jsx` | componente | `refactor/components` | ⬜ Pendiente |
+| 1 | `timeAgo` + `formatMemberSince` → `src/utils/helpers.js` | utility | `refactor/utils` | ✅ Hecho |
+| 2 | `CATEGORY_CONFIG` → `src/utils/categories.js` | utility | `refactor/utils` | ✅ Hecho |
+| 3 | `useTypewriter` + `Cursor` → `src/hooks/useTypewriter.jsx` | hook | `refactor/hooks` | ✅ Hecho |
+| 4 | `<DeleteConfirmModal />` → `src/components/DeleteConfirmModal.jsx` | componente | `refactor/components` | 🔄 En progreso |
+| 5 | `<Tape />` → `src/components/Tape.jsx` | componente | `refactor/components` | ⬜ Pendiente |
+| 6 | `<Avatar />` → `src/components/Avatar.jsx` | componente | `refactor/components` | ⬜ Pendiente |
+| 7 | `<BackButton />` → `src/components/BackButton.jsx` | componente | `refactor/components` | ⬜ Pendiente |
+| 8 | `<EditActions />` → `src/components/EditActions.jsx` | componente | `refactor/components` | ⬜ Pendiente |
 | 9 | Datos mock → `src/mocks/data.js` | datos | `refactor/mocks` | ⬜ Pendiente |
 
 ---
