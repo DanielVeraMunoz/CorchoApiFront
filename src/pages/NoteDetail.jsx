@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Megaphone, Users, Lightbulb, CalendarDays, HandHeart, ShoppingBag, AlertTriangle, Inbox, LayoutGrid, Heart, CheckCircle, Pencil, Trash2 } from 'lucide-react';
 import MenuBar from '../components/MenuBar';
+import { timeAgo } from '../utils/helpers';
 
 const MY_USER_ID = 2;
 const IS_ADMIN = false;
@@ -62,14 +63,6 @@ const MOCK_ALL_USERS = [
 ];
 
 const COMMENT_ROTATIONS = [-1.5, 0.8, -0.6, 1.2, -1, 0.5];
-
-function timeAgo(dateString) {
-  const diffDays = Math.floor((Date.now() - new Date(dateString)) / 86400000);
-  if (diffDays === 0) return 'hoy';
-  if (diffDays === 1) return 'ayer';
-  if (diffDays < 7) return `hace ${diffDays}d`;
-  return `hace ${Math.floor(diffDays / 7)}sem`;
-}
 
 function useTypewriter(text, speed = 38, startDelay = 0) {
   const [displayed, setDisplayed] = useState('');

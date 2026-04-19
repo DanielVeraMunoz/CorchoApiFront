@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Heart, Star, Pencil, Trash2, Megaphone, CalendarDays, ShoppingBag, LayoutGrid } from 'lucide-react';
 import MenuBar from '../components/MenuBar';
+import { timeAgo, formatMemberSince } from '../utils/helpers';
 
 const MY_USER_ID = 2;
 const IS_ADMIN = false;
@@ -70,19 +71,6 @@ function Cursor({ visible }) {
   }, [visible]);
   if (!visible) return null;
   return <span style={{ opacity: show ? 1 : 0, fontWeight: 400 }}>|</span>;
-}
-
-function formatMemberSince(dateString) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
-}
-
-function timeAgo(dateString) {
-  const diffDays = Math.floor((Date.now() - new Date(dateString)) / 86400000);
-  if (diffDays === 0) return 'hoy';
-  if (diffDays === 1) return 'ayer';
-  if (diffDays < 7) return `hace ${diffDays}d`;
-  return `hace ${Math.floor(diffDays / 7)}sem`;
 }
 
 export default function UserProfile() {
