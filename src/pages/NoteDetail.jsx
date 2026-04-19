@@ -5,6 +5,7 @@ import BackButton from '../components/BackButton';
 import MenuBar from '../components/MenuBar';
 import Tape from '../components/Tape';
 import { timeAgo } from '../utils/helpers';
+import EditActions from '../components/EditActions';
 import Avatar from '../components/Avatar';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
 import { CATEGORY_CONFIG, DEFAULT_CONFIG } from '../utils/categories';
@@ -358,34 +359,12 @@ export default function NoteDetail() {
                   </span>
                 )}
 
-                {/* Modo edición: Guardar + Cancelar */}
                 {isEditing ? (
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button
-                      onClick={cancelEdit}
-                      style={{
-                        background: 'none', border: '1px solid var(--color-border)',
-                        fontFamily: 'var(--font)', fontSize: '11px', fontWeight: '700',
-                        color: 'var(--color-text-muted)', padding: '5px 12px', cursor: 'pointer',
-                      }}
-                    >
-                      Cancelar
-                    </button>
-                    <button
-                      onClick={handleSave}
-                      disabled={!editTitle.trim()}
-                      style={{
-                        backgroundColor: editTitle.trim() ? 'var(--color-accent)' : 'var(--color-border-light)',
-                        color: editTitle.trim() ? 'white' : 'var(--color-text-muted)',
-                        border: 'none', fontFamily: 'var(--font)',
-                        fontSize: '11px', fontWeight: '700',
-                        padding: '5px 12px', cursor: editTitle.trim() ? 'pointer' : 'default',
-                        textTransform: 'uppercase', letterSpacing: '0.5px',
-                      }}
-                    >
-                      Guardar
-                    </button>
-                  </div>
+                  <EditActions
+                    onSave={handleSave}
+                    onCancel={cancelEdit}
+                    disabled={!editTitle.trim()}
+                  />
                 ) : (
                   <>
                     {/* Botón Editar — autor o admin */}

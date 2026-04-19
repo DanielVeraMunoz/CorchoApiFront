@@ -85,12 +85,12 @@ El front está terminado visualmente. Antes de conectar la API, limpiamos el có
 | 1 | `timeAgo` + `formatMemberSince` → `src/utils/helpers.js` | utility | `refactor/utils` | ✅ Hecho |
 | 2 | `CATEGORY_CONFIG` → `src/utils/categories.js` | utility | `refactor/utils` | ✅ Hecho |
 | 3 | `useTypewriter` + `Cursor` → `src/hooks/useTypewriter.jsx` | hook | `refactor/hooks` | ✅ Hecho |
-| 4 | `<DeleteConfirmModal />` → `src/components/DeleteConfirmModal.jsx` | componente | `refactor/components` | 🔄 En progreso |
-| 5 | `<Tape />` → `src/components/Tape.jsx` | componente | `refactor/components` | ⬜ Pendiente |
-| 6 | `<Avatar />` → `src/components/Avatar.jsx` | componente | `refactor/components` | ⬜ Pendiente |
-| 7 | `<BackButton />` → `src/components/BackButton.jsx` | componente | `refactor/components` | ⬜ Pendiente |
-| 8 | `<EditActions />` → `src/components/EditActions.jsx` | componente | `refactor/components` | ⬜ Pendiente |
-| 9 | Datos mock → `src/mocks/data.js` | datos | `refactor/mocks` | ⬜ Pendiente |
+| 4 | `<DeleteConfirmModal />` → `src/components/DeleteConfirmModal.jsx` | componente | `refactor/components` | ✅ Hecho |
+| 5 | `<Tape />` → `src/components/Tape.jsx` | componente | `refactor/components` | ✅ Hecho |
+| 6 | `<Avatar />` → `src/components/Avatar.jsx` | componente | `refactor/components` | ✅ Hecho |
+| 7 | `<BackButton />` → `src/components/BackButton.jsx` | componente | `refactor/components` | ✅ Hecho |
+| 8 | `<EditActions />` → `src/components/EditActions.jsx` | componente | `refactor/components` | ✅ Hecho |
+| 9 | Datos mock → `src/mocks/data.js` | datos | `refactor/mocks` | ⬜ Pendiente (desaparece con API) |
 
 ---
 

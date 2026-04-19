@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Heart, Star, Pencil, Trash2 } from 'lucide-react';
 import BackButton from '../components/BackButton';
+import EditActions from '../components/EditActions';
 import MenuBar from '../components/MenuBar';
 import { timeAgo, formatMemberSince } from '../utils/helpers';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
@@ -312,23 +313,12 @@ export default function UserProfile() {
 
               <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 {isEditing ? (
-                  <div style={{ display: 'flex', gap: '8px', marginLeft: 'auto' }}>
-                    <button onClick={cancelEdit} style={{
-                      background: 'none', border: '1px solid var(--color-border)',
-                      fontFamily: 'var(--font)', fontSize: '11px', fontWeight: '700',
-                      color: 'var(--color-text-muted)', padding: '5px 12px', cursor: 'pointer',
-                    }}>
-                      Cancelar
-                    </button>
-                    <button onClick={handleSave} disabled={!editName.trim()} style={{
-                      backgroundColor: editName.trim() ? 'var(--color-accent)' : 'var(--color-border-light)',
-                      color: editName.trim() ? 'white' : 'var(--color-text-muted)',
-                      border: 'none', fontFamily: 'var(--font)', fontSize: '11px', fontWeight: '700',
-                      padding: '5px 12px', cursor: editName.trim() ? 'pointer' : 'default',
-                      textTransform: 'uppercase', letterSpacing: '0.5px',
-                    }}>
-                      Guardar
-                    </button>
+                  <div style={{ marginLeft: 'auto' }}>
+                    <EditActions
+                      onSave={handleSave}
+                      onCancel={cancelEdit}
+                      disabled={!editName.trim()}
+                    />
                   </div>
                 ) : (
                   <>
