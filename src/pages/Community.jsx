@@ -5,6 +5,7 @@ import MenuBar from '../components/MenuBar';
 import Tape from '../components/Tape';
 import Avatar from '../components/Avatar';
 import { useTypewriter, Cursor } from '../hooks/useTypewriter.jsx';
+import { formatMemberSince } from '../utils/helpers';
 
 // Mock que replica la estructura real de GET /api/stats/community
 const MOCK_COMMUNITY_STATS = {
@@ -34,10 +35,6 @@ const MOCK_USERS = [
 const MEDAL_COLORS = ['#DDC068', '#9CA3AF', '#C2844A'];
 const STAT_ROTATIONS = [-1.5, 1, -0.8, 1.2];
 
-function formatSince(dateString) {
-  return new Date(dateString).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
-}
-
 export default function Community() {
   const navigate = useNavigate();
   const [entered, setEntered] = useState(false);
@@ -55,7 +52,7 @@ export default function Community() {
     { label: 'Vecinos',  value: MOCK_COMMUNITY_STATS.users_count },
     { label: 'Notas',    value: MOCK_COMMUNITY_STATS.notes_count },
     { label: 'Barrio',   value: MOCK_COMMUNITY_STATS.neighborhood },
-    { label: 'Activa desde', value: formatSince(MOCK_COMMUNITY_STATS.created_at) },
+    { label: 'Activa desde', value: formatMemberSince(MOCK_COMMUNITY_STATS.created_at) },
   ];
 
   return (
