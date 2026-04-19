@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, Star, Pencil, Trash2, Megaphone, CalendarDays, ShoppingBag, LayoutGrid } from 'lucide-react';
+import { ArrowLeft, Heart, Star, Pencil, Trash2 } from 'lucide-react';
 import MenuBar from '../components/MenuBar';
 import { timeAgo, formatMemberSince } from '../utils/helpers';
+import { CATEGORY_CONFIG, DEFAULT_CONFIG } from '../utils/categories';
 
 const MY_USER_ID = 2;
 const IS_ADMIN = false;
@@ -27,16 +28,6 @@ const MOCK_USER_NOTES = {
   4: [],
 };
 
-const CATEGORY_COLORS = {
-  'Avisos oficiales': '#DD686D',
-  'Reuniones':        '#68A7DD',
-  'Sugerencias':      '#68DD9E',
-  'Eventos':          '#DDC068',
-  'Favores':          '#68DD9E',
-  'Mercadillo':       '#F97316',
-  'Incidencias':      '#A868DD',
-  'Cajón desastre':   '#DD6899',
-};
 
 const NOTE_ROTATIONS = [-1.5, 0.8, -0.6];
 
@@ -436,7 +427,7 @@ export default function UserProfile() {
           {userNotes.map((note, index) => {
             const delay = `${0.65 + index * 0.14}s`;
             const rotation = NOTE_ROTATIONS[index % NOTE_ROTATIONS.length];
-            const color = CATEGORY_COLORS[note.category?.name] || '#6B7280';
+            const color = (CATEGORY_CONFIG[note.category?.name] || DEFAULT_CONFIG).color;
 
             return (
               <div

@@ -1,23 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Megaphone, Users, Lightbulb, CalendarDays, HandHeart, ShoppingBag, AlertTriangle, Inbox, LayoutGrid, Heart, CheckCircle, Pencil, Trash2 } from 'lucide-react';
+import { ArrowLeft, CalendarDays, Heart, CheckCircle, Pencil, Trash2 } from 'lucide-react';
 import MenuBar from '../components/MenuBar';
 import { timeAgo } from '../utils/helpers';
+import { CATEGORY_CONFIG, DEFAULT_CONFIG } from '../utils/categories';
 
 const MY_USER_ID = 2;
 const IS_ADMIN = false;
-
-const CATEGORY_CONFIG = {
-  'Avisos oficiales': { Icon: Megaphone,    color: '#DD686D' },
-  'Reuniones':        { Icon: Users,         color: '#68A7DD' },
-  'Sugerencias':      { Icon: Lightbulb,     color: '#68DD9E' },
-  'Eventos':          { Icon: CalendarDays,  color: '#DDC068' },
-  'Favores':          { Icon: HandHeart,     color: '#68DD9E' },
-  'Mercadillo':       { Icon: ShoppingBag,   color: '#F97316' },
-  'Incidencias':      { Icon: AlertTriangle, color: '#A868DD' },
-  'Cajón desastre':   { Icon: Inbox,         color: '#DD6899' },
-};
-const DEFAULT_CONFIG = { Icon: LayoutGrid, color: '#6B7280' };
 
 const MOCK_NOTES = [
   {
