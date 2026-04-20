@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { useTypewriter, Cursor } from '../hooks/useTypewriter.jsx';
+import Tape from '../components/Tape';
 
 const MOCK_COMMUNITIES = [
   { id: 1, name: 'Calle Mayor 42, Madrid' },
@@ -57,42 +59,7 @@ function AnimatedField({ visible, children }) {
   );
 }
 
-// Escribe el texto carácter a carácter
-function useTypewriter(text, speed = 38) {
-  const [displayed, setDisplayed] = useState('');
-  const [done, setDone] = useState(false);
 
-  useEffect(() => {
-    setDisplayed('');
-    setDone(false);
-    let i = 0;
-    const timer = setInterval(() => {
-      i++;
-      setDisplayed(text.slice(0, i));
-      if (i >= text.length) {
-        setDone(true);
-        clearInterval(timer);
-      }
-    }, speed);
-    return () => clearInterval(timer);
-  }, [text, speed]);
-
-  return { displayed, done };
-}
-
-// Cursor parpadeante que desaparece al terminar de escribir
-function Cursor({ visible }) {
-  const [show, setShow] = useState(true);
-
-  useEffect(() => {
-    if (!visible) return;
-    const t = setInterval(() => setShow((s) => !s), 500);
-    return () => clearInterval(t);
-  }, [visible]);
-
-  if (!visible) return null;
-  return <span style={{ opacity: show ? 1 : 0, fontWeight: 400 }}>|</span>;
-}
 
 export default function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -140,13 +107,7 @@ export default function Login() {
         transform: 'rotate(-9deg)',
         boxShadow: '2px 3px 8px rgba(0,0,0,0.2)',
       }}>
-        <div style={{
-          position: 'absolute', top: '-9px', left: '50%',
-          transform: 'translateX(-50%) rotate(2deg)',
-          width: '40px', height: '16px',
-          backgroundColor: 'rgba(255,235,140,0.85)',
-          border: '1px solid rgba(180,150,30,0.2)',
-        }} />
+        <Tape width="40px" top="-9px" rotate="2deg" />
       </div>
 
       {/* Nota decorativa — arriba derecha */}
@@ -194,28 +155,13 @@ export default function Login() {
         transform: 'rotate(-5deg)',
         boxShadow: '2px 3px 8px rgba(0,0,0,0.15)',
       }}>
-        <div style={{
-          position: 'absolute', top: '-9px', left: '50%',
-          transform: 'translateX(-50%) rotate(3deg)',
-          width: '40px', height: '16px',
-          backgroundColor: 'rgba(255,235,140,0.85)',
-          border: '1px solid rgba(180,150,30,0.2)',
-        }} />
+        <Tape width="40px" top="-9px" rotate="3deg" />
       </div>
 
       {/* Formulario principal */}
       <div style={{ position: 'relative', width: '100%', maxWidth: '340px', zIndex: 10 }}>
 
-        {/* Tape */}
-        <div style={{
-          position: 'absolute', top: '-11px', left: '50%',
-          transform: 'translateX(-50%) rotate(-1.5deg)',
-          width: '64px', height: '22px',
-          backgroundColor: 'rgba(255,235,140,0.88)',
-          border: '1px solid rgba(180,150,30,0.2)',
-          zIndex: 11,
-          boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
-        }} />
+        <Tape width="64px" height="22px" top="-11px" />
 
         {/* Card */}
         <div style={{

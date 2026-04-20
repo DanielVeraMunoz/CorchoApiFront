@@ -1,7 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, Star, Pencil, Trash2, Megaphone, CalendarDays, ShoppingBag, LayoutGrid } from 'lucide-react';
+import { Heart, Star, Pencil, Trash2 } from 'lucide-react';
+import BackButton from '../components/BackButton';
+import EditActions from '../components/EditActions';
 import MenuBar from '../components/MenuBar';
+import { timeAgo, formatMemberSince } from '../utils/helpers';
+import DeleteConfirmModal from '../components/DeleteConfirmModal';
+import Tape from '../components/Tape';
+import Avatar from '../components/Avatar';
+import { CATEGORY_CONFIG, DEFAULT_CONFIG } from '../utils/categories';
+import { useTypewriter, Cursor } from '../hooks/useTypewriter.jsx';
 
 const MY_USER_ID = 2;
 const IS_ADMIN = false;
@@ -26,64 +34,8 @@ const MOCK_USER_NOTES = {
   4: [],
 };
 
-const CATEGORY_COLORS = {
-  'Avisos oficiales': '#DD686D',
-  'Reuniones':        '#68A7DD',
-  'Sugerencias':      '#68DD9E',
-  'Eventos':          '#DDC068',
-  'Favores':          '#68DD9E',
-  'Mercadillo':       '#F97316',
-  'Incidencias':      '#A868DD',
-  'Cajón desastre':   '#DD6899',
-};
 
 const NOTE_ROTATIONS = [-1.5, 0.8, -0.6];
-
-function useTypewriter(text, speed = 38, startDelay = 0) {
-  const [displayed, setDisplayed] = useState('');
-  const [done, setDone] = useState(false);
-
-  useEffect(() => {
-    setDisplayed('');
-    setDone(false);
-    let i = 0;
-    let interval;
-    const timeout = setTimeout(() => {
-      interval = setInterval(() => {
-        i++;
-        setDisplayed(text.slice(0, i));
-        if (i >= text.length) { setDone(true); clearInterval(interval); }
-      }, speed);
-    }, startDelay);
-    return () => { clearTimeout(timeout); clearInterval(interval); };
-  }, [text, speed, startDelay]);
-
-  return { displayed, done };
-}
-
-function Cursor({ visible }) {
-  const [show, setShow] = useState(true);
-  useEffect(() => {
-    if (!visible) return;
-    const t = setInterval(() => setShow((s) => !s), 500);
-    return () => clearInterval(t);
-  }, [visible]);
-  if (!visible) return null;
-  return <span style={{ opacity: show ? 1 : 0, fontWeight: 400 }}>|</span>;
-}
-
-function formatMemberSince(dateString) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
-}
-
-function timeAgo(dateString) {
-  const diffDays = Math.floor((Date.now() - new Date(dateString)) / 86400000);
-  if (diffDays === 0) return 'hoy';
-  if (diffDays === 1) return 'ayer';
-  if (diffDays < 7) return `hace ${diffDays}d`;
-  return `hace ${Math.floor(diffDays / 7)}sem`;
-}
 
 export default function UserProfile() {
   const { id } = useParams();
@@ -191,18 +143,7 @@ export default function UserProfile() {
         transform: entered ? 'translateX(0)' : 'translateX(-16px)',
         transition: 'opacity 0.3s ease, transform 0.3s ease',
       }}>
-        <button
-          onClick={handleBack}
-          style={{
-            display: 'flex', alignItems: 'center', gap: '6px',
-            background: 'none', border: 'none', cursor: 'pointer',
-            fontFamily: 'var(--font)', fontSize: '13px', fontWeight: '700',
-            color: 'var(--color-text-muted)', padding: 0,
-          }}
-        >
-          <ArrowLeft size={16} strokeWidth={2.5} />
-          Volver
-        </button>
+        <BackButton onClick={handleBack} />
       </div>
 
       {/* Tarjeta principal del usuario */}
@@ -218,14 +159,7 @@ export default function UserProfile() {
         }}>
 
           {/* Tape */}
-          <div style={{
-            position: 'absolute', top: '-11px', left: '50%',
-            transform: 'translateX(-50%) rotate(-1deg)',
-            width: '64px', height: '22px',
-            backgroundColor: 'rgba(255,235,140,0.88)',
-            border: '1px solid rgba(180,150,30,0.2)',
-            zIndex: 1, boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
-          }} />
+          <Tape width="64px" height="22px" rotate="-1deg" top="-11px" />
 
           <div style={{
             backgroundColor: 'var(--color-white)',
@@ -253,14 +187,7 @@ export default function UserProfile() {
 
             {/* Avatar + nombre */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '18px' }}>
-              <div style={{
-                width: '52px', height: '52px', flexShrink: 0,
-                backgroundColor: 'var(--color-accent)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'white', fontFamily: 'var(--font-display)', fontSize: '28px',
-              }}>
-                {isEditing ? editName.charAt(0).toUpperCase() || initial : initial}
-              </div>
+              <Avatar name={isEditing ? editName || user.name : user.name} size={52} fontSize={28} />
               <div style={{ flex: 1, minWidth: 0 }}>
                 {isEditing ? (
                   <input
@@ -386,23 +313,12 @@ export default function UserProfile() {
 
               <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 {isEditing ? (
-                  <div style={{ display: 'flex', gap: '8px', marginLeft: 'auto' }}>
-                    <button onClick={cancelEdit} style={{
-                      background: 'none', border: '1px solid var(--color-border)',
-                      fontFamily: 'var(--font)', fontSize: '11px', fontWeight: '700',
-                      color: 'var(--color-text-muted)', padding: '5px 12px', cursor: 'pointer',
-                    }}>
-                      Cancelar
-                    </button>
-                    <button onClick={handleSave} disabled={!editName.trim()} style={{
-                      backgroundColor: editName.trim() ? 'var(--color-accent)' : 'var(--color-border-light)',
-                      color: editName.trim() ? 'white' : 'var(--color-text-muted)',
-                      border: 'none', fontFamily: 'var(--font)', fontSize: '11px', fontWeight: '700',
-                      padding: '5px 12px', cursor: editName.trim() ? 'pointer' : 'default',
-                      textTransform: 'uppercase', letterSpacing: '0.5px',
-                    }}>
-                      Guardar
-                    </button>
+                  <div style={{ marginLeft: 'auto' }}>
+                    <EditActions
+                      onSave={handleSave}
+                      onCancel={cancelEdit}
+                      disabled={!editName.trim()}
+                    />
                   </div>
                 ) : (
                   <>
@@ -448,7 +364,7 @@ export default function UserProfile() {
           {userNotes.map((note, index) => {
             const delay = `${0.65 + index * 0.14}s`;
             const rotation = NOTE_ROTATIONS[index % NOTE_ROTATIONS.length];
-            const color = CATEGORY_COLORS[note.category?.name] || '#6B7280';
+            const color = (CATEGORY_CONFIG[note.category?.name] || DEFAULT_CONFIG).color;
 
             return (
               <div
@@ -510,63 +426,13 @@ export default function UserProfile() {
     </div>
     <MenuBar active="profile" />
 
-    {/* Confirmación eliminar cuenta */}
     {showDeleteConfirm && (
-      <>
-        <div
-          onClick={() => setShowDeleteConfirm(false)}
-          style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 200 }}
-        />
-        <div style={{
-          position: 'fixed', top: '50%', left: '50%',
-          transform: 'translateX(-50%) translateY(-50%) rotate(-0.5deg)',
-          width: 'calc(100% - 80px)', maxWidth: '300px',
-          backgroundColor: 'var(--color-white)',
-          border: '1px solid var(--color-border)',
-          padding: '28px 20px 24px',
-          zIndex: 201,
-          boxShadow: '4px 8px 24px rgba(0,0,0,0.18)',
-        }}>
-          <div style={{
-            position: 'absolute', top: '-10px', left: '50%',
-            transform: 'translateX(-50%) rotate(-1.5deg)',
-            width: '44px', height: '16px',
-            backgroundColor: 'rgba(255,235,140,0.88)',
-            border: '1px solid rgba(180,150,30,0.2)',
-          }} />
-          <p style={{ fontSize: '15px', fontWeight: '700', color: 'var(--color-text)', marginBottom: '8px' }}>
-            ¿Eliminar cuenta?
-          </p>
-          <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', marginBottom: '24px', lineHeight: '1.5' }}>
-            Se borrará permanentemente y no se puede deshacer.
-          </p>
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <button
-              onClick={() => setShowDeleteConfirm(false)}
-              style={{
-                flex: 1, height: '40px', background: 'none',
-                border: '1px solid var(--color-border)',
-                fontFamily: 'var(--font)', fontSize: '12px', fontWeight: '700',
-                color: 'var(--color-text-muted)', cursor: 'pointer',
-              }}
-            >
-              Cancelar
-            </button>
-            <button
-              onClick={handleDelete}
-              style={{
-                flex: 1, height: '40px',
-                backgroundColor: '#DD686D', color: 'white',
-                border: 'none', fontFamily: 'var(--font)',
-                fontSize: '12px', fontWeight: '700', cursor: 'pointer',
-                textTransform: 'uppercase', letterSpacing: '0.5px',
-              }}
-            >
-              Eliminar
-            </button>
-          </div>
-        </div>
-      </>
+      <DeleteConfirmModal
+        title="¿Eliminar cuenta?"
+        message="Se borrará permanentemente y no se puede deshacer."
+        onConfirm={handleDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
     )}
     </>
   );

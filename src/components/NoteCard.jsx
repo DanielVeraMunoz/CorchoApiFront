@@ -1,34 +1,14 @@
-import { Megaphone, Users, Lightbulb, CalendarDays, HandHeart, ShoppingBag, AlertTriangle, Inbox, LayoutGrid, MessageCircle } from 'lucide-react';
-
-const CATEGORY_CONFIG = {
-  'Avisos oficiales': { Icon: Megaphone,     color: '#DD686D' },
-  'Reuniones':        { Icon: Users,          color: '#68A7DD' },
-  'Sugerencias':      { Icon: Lightbulb,      color: '#68DD9E' },
-  'Eventos':          { Icon: CalendarDays,   color: '#DDC068' },
-  'Favores':          { Icon: HandHeart,      color: '#68DD9E' },
-  'Mercadillo':       { Icon: ShoppingBag,    color: '#F97316' },
-  'Incidencias':      { Icon: AlertTriangle,  color: '#A868DD' },
-  'Cajón desastre':   { Icon: Inbox,          color: '#DD6899' },
-};
-
-const DEFAULT_CONFIG = { Icon: LayoutGrid, color: '#6B7280' };
+import { MessageCircle } from 'lucide-react';
+import Tape from './Tape';
+import Avatar from './Avatar';
+import { CATEGORY_CONFIG, DEFAULT_CONFIG } from '../utils/categories';
+import { timeAgo } from '../utils/helpers';
 
 // Rotaciones suaves — 5 valores distintos, se asignan por id % 5
 const ROTATIONS = [-2, -0.8, 1.2, -1.5, 0.5];
 
 // Tipo de decoración — se asigna por id % 2
 const DECORATION_TYPES = ['pin', 'tape'];
-
-function timeAgo(dateString) {
-  const now = new Date();
-  const date = new Date(dateString);
-  const diffMs = now - date;
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  if (diffDays === 0) return 'hoy';
-  if (diffDays === 1) return 'ayer';
-  if (diffDays < 7) return `hace ${diffDays}d`;
-  return `hace ${Math.floor(diffDays / 7)}sem`;
-}
 
 export default function NoteCard({ note, onClick }) {
   const initial = note.user?.name?.charAt(0).toUpperCase() || '?';
@@ -81,20 +61,8 @@ export default function NoteCard({ note, onClick }) {
         </div>
       )}
 
-      {/* Celo / Tape */}
       {decorationType === 'tape' && (
-        <div style={{
-          position: 'absolute',
-          top: '-10px',
-          left: '50%',
-          transform: 'translateX(-50%) rotate(-2deg)',
-          width: '54px',
-          height: '20px',
-          backgroundColor: 'rgba(255, 235, 140, 0.82)',
-          border: '1px solid rgba(180, 150, 30, 0.2)',
-          zIndex: 2,
-          boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
-        }} />
+        <Tape width="54px" height="20px" rotate="-2deg" />
       )}
 
       {/* Tarjeta */}
@@ -138,20 +106,7 @@ export default function NoteCard({ note, onClick }) {
         {/* Footer */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{
-              width: '28px',
-              height: '28px',
-              backgroundColor: 'var(--color-accent)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontFamily: 'var(--font-display)',
-              fontSize: '15px',
-              flexShrink: 0,
-            }}>
-              {initial}
-            </div>
+            <Avatar name={note.user?.name} size={28} fontSize={15} />
             <div>
               <p style={{ fontSize: '12px', fontWeight: '600', color: 'var(--color-text)' }}>
                 {note.user?.name || 'Usuario'}

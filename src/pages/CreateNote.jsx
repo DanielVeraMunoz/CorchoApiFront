@@ -1,51 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Megaphone, Users, Lightbulb, CalendarDays, HandHeart, ShoppingBag, AlertTriangle, Inbox } from 'lucide-react';
 import MenuBar from '../components/MenuBar';
+import Tape from '../components/Tape';
+import BackButton from '../components/BackButton';
+import { useTypewriter, Cursor } from '../hooks/useTypewriter.jsx';
+import { CATEGORY_CONFIG } from '../utils/categories';
 
-const CATEGORIES = [
-  { id: 1, name: 'Avisos oficiales', Icon: Megaphone,    color: '#DD686D' },
-  { id: 2, name: 'Reuniones',        Icon: Users,         color: '#68A7DD' },
-  { id: 3, name: 'Sugerencias',      Icon: Lightbulb,     color: '#68DD9E' },
-  { id: 4, name: 'Eventos',          Icon: CalendarDays,  color: '#DDC068' },
-  { id: 5, name: 'Favores',          Icon: HandHeart,     color: '#68DD9E' },
-  { id: 6, name: 'Mercadillo',       Icon: ShoppingBag,   color: '#F97316' },
-  { id: 7, name: 'Incidencias',      Icon: AlertTriangle, color: '#A868DD' },
-  { id: 8, name: 'Cajón desastre',   Icon: Inbox,         color: '#DD6899' },
-];
-
-function useTypewriter(text, speed = 38, startDelay = 0) {
-  const [displayed, setDisplayed] = useState('');
-  const [done, setDone] = useState(false);
-
-  useEffect(() => {
-    setDisplayed('');
-    setDone(false);
-    let i = 0;
-    let interval;
-    const timeout = setTimeout(() => {
-      interval = setInterval(() => {
-        i++;
-        setDisplayed(text.slice(0, i));
-        if (i >= text.length) { setDone(true); clearInterval(interval); }
-      }, speed);
-    }, startDelay);
-    return () => { clearTimeout(timeout); clearInterval(interval); };
-  }, [text, speed, startDelay]);
-
-  return { displayed, done };
-}
-
-function Cursor({ visible }) {
-  const [show, setShow] = useState(true);
-  useEffect(() => {
-    if (!visible) return;
-    const t = setInterval(() => setShow((s) => !s), 500);
-    return () => clearInterval(t);
-  }, [visible]);
-  if (!visible) return null;
-  return <span style={{ opacity: show ? 1 : 0, fontWeight: 400 }}>|</span>;
-}
+const CATEGORIES = Object.entries(CATEGORY_CONFIG).map(([name, config], index) => ({
+  id: index + 1, name, ...config,
+}));
 
 export default function CreateNote() {
   const navigate = useNavigate();
@@ -91,16 +54,7 @@ export default function CreateNote() {
         opacity: entered ? 1 : 0,
         transition: 'opacity 0.3s ease',
       }}>
-        <button
-          onClick={handleBack}
-          style={{
-            background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-            fontFamily: 'var(--font)', fontSize: '13px', fontWeight: '700',
-            color: 'var(--color-text-muted)', flexShrink: 0,
-          }}
-        >
-          ← Volver
-        </button>
+        <BackButton onClick={handleBack} />
         <h1 style={{
           fontFamily: 'var(--font-display)', fontSize: '28px', fontWeight: '400',
           color: 'var(--color-accent)', letterSpacing: '2px', margin: 0, minHeight: '34px',
@@ -121,14 +75,7 @@ export default function CreateNote() {
         }}>
 
           {/* Tape */}
-          <div style={{
-            position: 'absolute', top: '-11px', left: '50%',
-            transform: 'translateX(-50%) rotate(-1.5deg)',
-            width: '64px', height: '22px',
-            backgroundColor: 'rgba(255,235,140,0.88)',
-            border: '1px solid rgba(180,150,30,0.2)',
-            zIndex: 1, boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
-          }} />
+          <Tape width="64px" height="22px" top="-11px" />
 
           <div style={{
             backgroundColor: 'var(--color-white)',
