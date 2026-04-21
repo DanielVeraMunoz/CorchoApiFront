@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTypewriter, Cursor } from '../hooks/useTypewriter.jsx';
 import Tape from '../components/Tape';
+import api from '../api/axios.js';
+import { useAuth } from '../context/AuthContext.jsx';
 
 const MOCK_COMMUNITIES = [
   { id: 1, name: 'Calle Mayor 42, Madrid' },
@@ -72,6 +75,10 @@ export default function Login() {
 
   const modeText = isLogin ? 'Iniciar sesión' : 'Crear cuenta';
   const { displayed, done } = useTypewriter(modeText);
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [error, setError] = useState('');
+
 
   const switchMode = () => {
     setWobble(true);
@@ -82,7 +89,17 @@ export default function Login() {
   };
 
   const handleFocus = (e) => { e.target.style.borderColor = 'var(--color-accent)'; };
-  const handleBlur  = (e) => { e.target.style.borderColor = 'var(--color-border)'; };
+  const handleBlur = (e) => { e.target.style.borderColor = 'var(--color-border)'; };
+
+  const handleSubmit = async () => {
+    try {
+      const response = await api.post('/login', { email, password });
+      login(response.data.token, response.data.user);
+      navigate('/dashboard');
+    } catch (err) {
+      setError('Email o contraseña incorrectos');
+    }
+  };
 
   return (
     <div style={{
@@ -274,8 +291,12 @@ export default function Login() {
             </div>
           </AnimatedField>
 
+          {/* Error */}
+          {error && <p style={{ color: '#DD686D', fontSize: '12px', marginBottom: '8px', textAlign: 'center' }}>{error}</p>}
+
           {/* Botón */}
           <button
+            onClick={handleSubmit}
             style={{
               width: '100%',
               height: '46px',
