@@ -99,9 +99,11 @@ export default function Dashboard() {
     setTimeout(() => navigate(`/notes/${id}`), 260);
   };
 
-  const filteredNotes = notes.filter((note) =>
-    note.title.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredNotes = notes.filter((note) => {
+    const matchesSearch = note.title.toLowerCase().includes(search.toLowerCase());
+    const matchesCategory = selectedCategory === null || note.category.id === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <>
