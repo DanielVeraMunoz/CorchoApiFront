@@ -11,57 +11,22 @@ import DeleteConfirmModal from '../components/DeleteConfirmModal';
 import ResolveModal from '../components/ResolveModal';
 import { CATEGORY_CONFIG, DEFAULT_CONFIG } from '../utils/categories';
 import { useTypewriter, Cursor } from '../hooks/useTypewriter.jsx';
-
-const MY_USER_ID = 2;
-const IS_ADMIN = false;
-
-const MOCK_NOTES = [
-  {
-    id: 1, title: 'Corte de agua el jueves',
-    description: 'El jueves 17 habrá corte de agua de 9:00 a 14:00 por obras en la red principal. Se recomienda tener agua embotellada para ese período y llenar recipientes la noche anterior si es posible.',
-    is_completed: false, created_at: new Date(Date.now() - 2 * 86400000).toISOString(),
-    user: { id: 1, name: 'Ana García' }, category: { name: 'Avisos oficiales' },
-  },
-  {
-    id: 2, title: 'Fiesta de vecinos en el patio',
-    description: 'Este sábado organizamos una barbacoa en el patio. ¡Todos estáis invitados! Traed algo para compartir. Empezamos a las 13:00h. Los niños son bienvenidos.',
-    is_completed: false, created_at: new Date(Date.now() - 1 * 86400000).toISOString(),
-    event_date: '2026-04-26',
-    user: { id: 2, name: 'Carlos M.' }, category: { name: 'Eventos' },
-  },
-  {
-    id: 3, title: 'Se vende bicicleta',
-    description: 'Vendo bici de montaña en buen estado. 150€. Interesados contactar por el portal o dejar nota en el buzón del 3ºB.',
-    is_completed: true, created_at: new Date(Date.now() - 5 * 86400000).toISOString(),
-    user: { id: 3, name: 'Laura P.' }, category: { name: 'Mercadillo' },
-  },
-];
-
-const MOCK_COMMENTS = {
-  1: [
-    { id: 1, user: { id: 2, name: 'Carlos M.' },  text: 'Gracias por avisar, justo me pillaba duchándome jaja',      created_at: new Date(Date.now() - 1.5 * 86400000).toISOString() },
-    { id: 2, user: { id: 3, name: 'Laura P.' },   text: '¿Sabes si afecta también al portal B?',                      created_at: new Date(Date.now() - 1.0 * 86400000).toISOString() },
-    { id: 3, user: { id: 1, name: 'Ana García' }, text: 'Sí, afecta a todo el edificio según el comunicado oficial.', created_at: new Date(Date.now() - 0.5 * 86400000).toISOString() },
-  ],
-  2: [
-    { id: 4, user: { id: 1, name: 'Ana García' }, text: '¡Me apunto! ¿Hay que traer algo en concreto?', created_at: new Date(Date.now() - 0.8 * 86400000).toISOString() },
-    { id: 5, user: { id: 3, name: 'Laura P.' },   text: 'Yo llevo ensalada :)',                          created_at: new Date(Date.now() - 0.4 * 86400000).toISOString() },
-  ],
-  3: [],
-};
-
-const MOCK_ALL_USERS = [
-  { id: 1, name: 'Ana García', floor: '1', door: 'A' },
-  { id: 2, name: 'Carlos M.',  floor: '3', door: 'B' },
-  { id: 3, name: 'Laura P.',   floor: '2', door: 'C' },
-  { id: 4, name: 'John Doe',   floor: '4', door: 'A' },
-  { id: 5, name: 'Jane Smith', floor: '1', door: 'B' },
-];
+import api from '../api/axios';
+import { useAuth } from '../context/AuthContext';
 
 const COMMENT_ROTATIONS = [-1.5, 0.8, -0.6, 1.2, -1, 0.5];
 
 export default function NoteDetail() {
   const { id } = useParams();
+  const { token, user } = useAuth();
+  const MY_USER_ID = user?.id;
+  const IS_ADMIN = user?.role === 'admin';
+
+  const [note, setNote] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+
   const navigate = useNavigate();
 
   const [entered, setEntered]       = useState(false);
@@ -90,6 +55,22 @@ export default function NoteDetail() {
     return () => clearTimeout(t);
   }, []);
 
+  useEffect(() => {
+    Promise.all([
+      api.get(`/notes/${id}`, { headers: { Authorization: `Bearer ${token}` } }),
+      api.get(`/notes/${id}/comments`, { headers: { Authorization: `Bearer ${token}` } })
+    ])
+    .then(([noteResponse, commentsResponse]) => {
+      setNote(noteResponse.data.data);
+      setComments(commentsResponse.data.data);
+      setLoading(false);
+    })
+    .catch((error) => {
+      console.error('Error fetching note or comments:', error);
+      setLoading(false);
+    });
+  }, [id, token]);
+
   const handleBack = () => {
     setExiting(true);
     setTimeout(() => navigate('/dashboard'), 260);
@@ -110,23 +91,15 @@ export default function NoteDetail() {
     }, 320);
   };
 
-  const note = MOCK_NOTES.find((n) => n.id === Number(id));
-  const comments = MOCK_COMMENTS[Number(id)] || [];
 
-  if (!note) {
-    return (
-      <div style={{ padding: '40px 24px', textAlign: 'center' }}>
-        <p>Nota no encontrada.</p>
-        <button onClick={() => navigate('/dashboard')}>Volver</button>
-      </div>
-    );
-  }
 
-  const { Icon: CategoryIcon, color: categoryColor } = CATEGORY_CONFIG[note.category?.name] || DEFAULT_CONFIG;
-  const initial = note.user?.name?.charAt(0).toUpperCase() || '?';
-  const noteRotation = note.id % 2 === 0 ? 0.8 : -1;
-  const isAuthor = note.user?.id === MY_USER_ID;
-  const completed = isCompleted || note.is_completed;
+  const { Icon: CategoryIcon, color: categoryColor } = note
+    ? CATEGORY_CONFIG[note.category?.name] || DEFAULT_CONFIG
+    : DEFAULT_CONFIG;
+  const initial = note?.user?.name?.charAt(0).toUpperCase() || '?';
+  const noteRotation = note?.id % 2 === 0 ? 0.8 : -1;
+  const isAuthor = note?.user?.id === MY_USER_ID;
+  const completed = isCompleted || note?.is_completed;
   const canEdit = isAuthor || IS_ADMIN;
 
   const startEdit = () => {
@@ -156,12 +129,26 @@ export default function NoteDetail() {
     navigate('/dashboard');
   };
 
-  const { displayed: titleDisplayed, done: titleDone } = useTypewriter(note.title, 36, 400);
+  const handleComment = async () => {
+    try {
+      const response = await api.post(`/notes/${id}/comments`, { content: newComment }, { headers: { Authorization: `Bearer ${token}` } });
+      setComments([...comments, response.data.data]);
+      setNewComment('');
+    } catch (error) {
+      console.error('Error adding comment:', error);
+
+    }
+  };
+
+  const { displayed: titleDisplayed, done: titleDone } = useTypewriter(note?.title || '', 36, 400);
   const commentsBaseDelay = 0.65;
 
   const commenters = comments
     .map((c) => c.user)
     .filter((u, i, arr) => u.id !== note.user?.id && arr.findIndex((x) => x.id === u.id) === i);
+
+  if (loading) return <div style={{ padding: '40px 24px', textAlign: 'center' }}>Cargando...</div>;
+  if (!note) return <div style={{ padding: '40px 24px', textAlign: 'center' }}><p>Nota no encontrada.</p><button onClick={() => navigate('/dashboard')}>Volver</button></div>;
 
   return (
     <>
@@ -421,7 +408,7 @@ export default function NoteDetail() {
                 padding: '16px 16px 14px', boxShadow: '2px 4px 10px rgba(0,0,0,0.1)',
               }}>
                 <p style={{ fontSize: '13px', color: 'var(--color-text)', lineHeight: '1.55', marginBottom: '12px' }}>
-                  {comment.text}
+                  {comment.content}
                 </p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
                   <Avatar name={comment.user?.name} size={22} color="#DDC068" fontSize={13} />
@@ -469,7 +456,9 @@ export default function NoteDetail() {
                   }}
                 />
                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <button disabled={!newComment.trim()} style={{
+                  <button disabled={!newComment.trim()} 
+                  onClick={handleComment} style={{
+                    
                     backgroundColor: 'var(--color-accent)', color: 'white',
                     border: 'none', fontFamily: 'var(--font)', fontSize: '12px', fontWeight: '700',
                     padding: '7px 18px', cursor: newComment.trim() ? 'pointer' : 'default',
@@ -491,7 +480,7 @@ export default function NoteDetail() {
     {showModal && (
       <ResolveModal
         commenters={commenters}
-        allUsers={MOCK_ALL_USERS.filter((u) => u.id !== note.user?.id)}
+        allUsers={[]}
         onClose={closeModal}
         onResolve={handleResolve}
       />
