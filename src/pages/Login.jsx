@@ -92,10 +92,12 @@ export default function Login() {
   const handleBlur = (e) => { e.target.style.borderColor = 'var(--color-border)'; };
 
   const handleSubmit = async () => {
+    
     try {
       const response = await api.post('/login', { email, password });
-      login(response.data.token, response.data.user);
+      login(response.data.access_token, response.data.data);
       navigate('/dashboard');
+      console.log('respuesta completa:', response.data);
     } catch (err) {
       setError('Email o contraseña incorrectos');
     }

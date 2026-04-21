@@ -4,6 +4,8 @@ import SearchBar from '../components/SearchBar';
 import CategoryScrollableRow from '../components/CategoryScrollableRow';
 import NoteCard from '../components/NoteCard';
 import MenuBar from '../components/MenuBar';
+import api from '../api/axios';
+import { useAuth } from '../context/AuthContext';
 
 const MOCK_CATEGORIES = [
   { id: 1, name: 'Avisos oficiales' },
@@ -49,6 +51,11 @@ const MOCK_NOTES = [
 
 export default function Dashboard() {
   const navigate = useNavigate();
+
+  const { token } = useAuth();
+  const [notes, setNotes] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [visible, setVisible] = useState(false);
@@ -59,12 +66,30 @@ export default function Dashboard() {
     return () => clearTimeout(t);
   }, []);
 
+  useEffect(() => {
+
+    console.log('token:', token);
+
+    api.get('/notes', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => {
+        setNotes(res.data.data);
+      })
+      .catch((err) => {
+        console.error('Error fetching notes:', err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [token]);
+
   const goToNote = (id) => {
     setExiting(true);
     setTimeout(() => navigate(`/notes/${id}`), 260);
   };
 
-  const filteredNotes = MOCK_NOTES.filter((note) =>
+  const filteredNotes = notes.filter((note) =>
     note.title.toLowerCase().includes(search.toLowerCase())
   );
 
