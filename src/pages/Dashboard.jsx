@@ -7,47 +7,6 @@ import MenuBar from '../components/MenuBar';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 
-const MOCK_CATEGORIES = [
-  { id: 1, name: 'Avisos oficiales' },
-  { id: 2, name: 'Eventos' },
-  { id: 3, name: 'Favores' },
-  { id: 4, name: 'Mercadillo' },
-  { id: 5, name: 'Mantenimiento' },
-  { id: 6, name: 'Mascotas' },
-];
-
-const MOCK_NOTES = [
-  {
-    id: 1,
-    title: 'Corte de agua el jueves',
-    description: 'El jueves 17 habrá corte de agua de 9:00 a 14:00 por obras en la red principal.',
-    is_completed: false,
-    created_at: new Date(Date.now() - 2 * 86400000).toISOString(),
-    user: { name: 'Ana García' },
-    category: { name: 'Avisos oficiales' },
-    comments_count: 4,
-  },
-  {
-    id: 2,
-    title: 'Fiesta de vecinos en el patio',
-    description: 'Este sábado organizamos una barbacoa en el patio. ¡Todos estáis invitados! Traed algo para compartir.',
-    is_completed: false,
-    created_at: new Date(Date.now() - 1 * 86400000).toISOString(),
-    user: { name: 'Carlos M.' },
-    category: { name: 'Eventos' },
-    comments_count: 7,
-  },
-  {
-    id: 3,
-    title: 'Se vende bicicleta',
-    description: 'Vendo bici de montaña en buen estado. 150€. Interesados contactar por el portal.',
-    is_completed: true,
-    created_at: new Date(Date.now() - 5 * 86400000).toISOString(),
-    user: { name: 'Laura P.' },
-    category: { name: 'Mercadillo' },
-    comments_count: 2,
-  },
-];
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -63,14 +22,13 @@ export default function Dashboard() {
   const [exiting, setExiting] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setVisible(true), 30);
-    return () => clearTimeout(t);
-  }, []);
+    if (!loading) {
+      const t = setTimeout(() => setVisible(true), 30);
+      return () => clearTimeout(t);
+    }
+  }, [loading]);
 
   useEffect(() => {
-
-    console.log('token:', token);
-
     api.get('/notes', {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -163,8 +121,17 @@ export default function Dashboard() {
               No hay notas que coincidan
             </p>
           ) : (
-            filteredNotes.map((note) => (
-              <NoteCard key={note.id} note={note} onClick={() => goToNote(note.id)} />
+            filteredNotes.map((note, index) => (
+              <div
+                key={note.id}
+                style={{
+                  opacity: visible ? 1 : 0,
+                  transform: visible ? 'translateY(0)' : 'translateY(24px)',
+                  transition: `opacity 0.35s ease ${index * 0.08}s, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) ${index * 0.08}s`,
+                }}
+              >
+                <NoteCard note={note} onClick={() => goToNote(note.id)} />
+              </div>
             ))
           )}
         </div>
