@@ -174,8 +174,8 @@ export default function Community() {
 
           return (
             <div
-              key={helper.id}
-              onClick={() => navigate(`/users/${helper.id}`)}
+              key={helper.user_id}
+              onClick={() => navigate(`/users/${helper.user_id}`)}
               style={{
                 position: 'relative',
                 marginTop: '14px', marginBottom: '18px',
