@@ -29,8 +29,8 @@ export default function NoteDetail() {
 
   const navigate = useNavigate();
 
-  const [entered, setEntered]       = useState(false);
-  const [exiting, setExiting]       = useState(false);
+  const [entered, setEntered] = useState(false);
+  const [exiting, setExiting] = useState(false);
   const [newComment, setNewComment] = useState('');
 
   // Estado local de completado (hasta conectar API)
@@ -39,15 +39,15 @@ export default function NoteDetail() {
   const [showModal, setShowModal] = useState(false);
 
   // Toast
-  const [showToast, setShowToast]       = useState(false);
+  const [showToast, setShowToast] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
 
   // Edición inline
-  const [isEditing, setIsEditing]               = useState(false);
-  const [editEntered, setEditEntered]           = useState(false);
-  const [editTitle, setEditTitle]               = useState('');
-  const [editDescription, setEditDescription]   = useState('');
-  const [editDate, setEditDate]                 = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editEntered, setEditEntered] = useState(false);
+  const [editTitle, setEditTitle] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [editDate, setEditDate] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
@@ -60,15 +60,15 @@ export default function NoteDetail() {
       api.get(`/notes/${id}`, { headers: { Authorization: `Bearer ${token}` } }),
       api.get(`/notes/${id}/comments`, { headers: { Authorization: `Bearer ${token}` } })
     ])
-    .then(([noteResponse, commentsResponse]) => {
-      setNote(noteResponse.data.data);
-      setComments(commentsResponse.data.data);
-      setLoading(false);
-    })
-    .catch((error) => {
-      console.error('Error fetching note or comments:', error);
-      setLoading(false);
-    });
+      .then(([noteResponse, commentsResponse]) => {
+        setNote(noteResponse.data.data);
+        setComments(commentsResponse.data.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching note or comments:', error);
+        setLoading(false);
+      });
   }, [id, token]);
 
   const handleBack = () => {
@@ -115,18 +115,31 @@ export default function NoteDetail() {
     setTimeout(() => { setIsEditing(false); setShowDeleteConfirm(false); }, 250);
   };
 
-  const handleSave = () => {
-    // TODO: llamada PUT /api/notes/:id
-    note.title = editTitle;
-    note.description = editDescription;
-    note.event_date = editDate || null;
-    setEditEntered(false);
-    setTimeout(() => setIsEditing(false), 250);
+  const handleSave = async () => {
+    try {
+      const response = await api.put(
+        `/notes/${id}`,
+        { title: editTitle, description: editDescription, event_date: editDate || null, category_id: note.category_id },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setNote(response.data.data);
+      setEditEntered(false);
+      setTimeout(() => setIsEditing(false), 250);
+    } catch (err) {
+      console.error('Error saving note:', err);
+    }
   };
 
-  const handleDelete = () => {
-    // TODO: llamada DELETE /api/notes/:id
-    navigate('/dashboard');
+  const handleDelete = async () => {
+    try {
+      await api.delete(
+        `/notes/${id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      navigate('/dashboard');
+    } catch (err) {
+      console.error('Error deleting note:', err);
+    }
   };
 
   const handleComment = async () => {
@@ -152,367 +165,367 @@ export default function NoteDetail() {
 
   return (
     <>
-    <div style={{
-      backgroundColor: 'var(--color-bg)', minHeight: '100svh', paddingBottom: '100px',
-      opacity: exiting ? 0 : 1,
-      transform: exiting ? 'translateX(30px)' : 'translateX(0)',
-      transition: 'opacity 0.25s ease, transform 0.25s ease',
-    }}>
-
-      {/* Botón volver */}
       <div style={{
-        padding: '52px 20px 0',
-        opacity: entered ? 1 : 0,
-        transform: entered ? 'translateX(0)' : 'translateX(-16px)',
-        transition: 'opacity 0.3s ease, transform 0.3s ease',
+        backgroundColor: 'var(--color-bg)', minHeight: '100svh', paddingBottom: '100px',
+        opacity: exiting ? 0 : 1,
+        transform: exiting ? 'translateX(30px)' : 'translateX(0)',
+        transition: 'opacity 0.25s ease, transform 0.25s ease',
       }}>
-        <BackButton onClick={handleBack} />
-      </div>
 
-      {/* Nota principal */}
-      <div style={{ padding: '0 24px', marginTop: '20px' }}>
+        {/* Botón volver */}
         <div style={{
-          position: 'relative',
+          padding: '52px 20px 0',
           opacity: entered ? 1 : 0,
-          transform: entered
-            ? `translateY(${isEditing ? '-4px' : '0'}) rotate(${isEditing ? '0' : noteRotation}deg) scale(${isEditing ? '1.02' : '1'})`
-            : `translateY(50px) rotate(${noteRotation - 4}deg)`,
-          transition: 'opacity 0.4s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)',
-          boxShadow: isEditing ? '6px 12px 28px rgba(0,0,0,0.18)' : 'none',
+          transform: entered ? 'translateX(0)' : 'translateX(-16px)',
+          transition: 'opacity 0.3s ease, transform 0.3s ease',
         }}>
-          <Tape width="64px" height="22px" rotate="-1deg" top="-11px" />
+          <BackButton onClick={handleBack} />
+        </div>
 
+        {/* Nota principal */}
+        <div style={{ padding: '0 24px', marginTop: '20px' }}>
           <div style={{
-            backgroundColor: 'var(--color-white)',
-            border: '1px solid var(--color-border)',
-            padding: '24px 20px 20px',
-            boxShadow: '3px 5px 14px rgba(0,0,0,0.14)',
-            marginTop: '12px',
+            position: 'relative',
+            opacity: entered ? 1 : 0,
+            transform: entered
+              ? `translateY(${isEditing ? '-4px' : '0'}) rotate(${isEditing ? '0' : noteRotation}deg) scale(${isEditing ? '1.02' : '1'})`
+              : `translateY(50px) rotate(${noteRotation - 4}deg)`,
+            transition: 'opacity 0.4s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)',
+            boxShadow: isEditing ? '6px 12px 28px rgba(0,0,0,0.18)' : 'none',
           }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '10px', marginBottom: '12px' }}>
+            <Tape width="64px" height="22px" rotate="-1deg" top="-11px" />
+
+            <div style={{
+              backgroundColor: 'var(--color-white)',
+              border: '1px solid var(--color-border)',
+              padding: '24px 20px 20px',
+              boxShadow: '3px 5px 14px rgba(0,0,0,0.14)',
+              marginTop: '12px',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '10px', marginBottom: '12px' }}>
+                {isEditing ? (
+                  <input
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                    maxLength={100}
+                    autoFocus
+                    style={{
+                      flex: 1, border: 'none', borderBottom: '1.5px solid var(--color-accent)',
+                      backgroundColor: 'transparent', fontFamily: 'var(--font)',
+                      fontSize: '18px', fontWeight: '700', color: 'var(--color-text)',
+                      outline: 'none', padding: '0 0 4px',
+                      opacity: editEntered ? 1 : 0,
+                      transform: editEntered ? 'translateY(0)' : 'translateY(8px)',
+                      transition: 'opacity 0.25s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                    }}
+                  />
+                ) : (
+                  <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--color-text)', lineHeight: '1.3', flex: 1, margin: 0, minHeight: '24px' }}>
+                    {titleDisplayed}<Cursor visible={!titleDone} />
+                  </h2>
+                )}
+                <CategoryIcon size={20} color={categoryColor} strokeWidth={2} style={{ flexShrink: 0, marginTop: '2px' }} />
+              </div>
+
+              {!isEditing && note.event_date && (
+                <p style={{
+                  display: 'flex', alignItems: 'center', gap: '4px',
+                  fontSize: '11px', fontWeight: '700', color: 'var(--color-accent)',
+                  marginBottom: '10px', marginTop: '-4px',
+                }}>
+                  <CalendarDays size={11} strokeWidth={2.5} color="var(--color-accent)" />
+                  {new Date(note.event_date + 'T12:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}
+                </p>
+              )}
+
               {isEditing ? (
-                <input
-                  value={editTitle}
-                  onChange={(e) => setEditTitle(e.target.value)}
-                  maxLength={100}
-                  autoFocus
+                <textarea
+                  value={editDescription}
+                  onChange={(e) => setEditDescription(e.target.value)}
+                  rows={4}
                   style={{
-                    flex: 1, border: 'none', borderBottom: '1.5px solid var(--color-accent)',
+                    width: '100%', border: 'none',
+                    borderBottom: '1px solid var(--color-border-light)',
                     backgroundColor: 'transparent', fontFamily: 'var(--font)',
-                    fontSize: '18px', fontWeight: '700', color: 'var(--color-text)',
-                    outline: 'none', padding: '0 0 4px',
+                    fontSize: '14px', color: 'var(--color-text)', resize: 'none',
+                    outline: 'none', lineHeight: '1.6', padding: '0 0 10px',
+                    marginBottom: '16px', boxSizing: 'border-box',
                     opacity: editEntered ? 1 : 0,
                     transform: editEntered ? 'translateY(0)' : 'translateY(8px)',
-                    transition: 'opacity 0.25s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                    transition: 'opacity 0.25s ease 0.06s, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 0.06s',
                   }}
                 />
               ) : (
-                <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--color-text)', lineHeight: '1.3', flex: 1, margin: 0, minHeight: '24px' }}>
-                  {titleDisplayed}<Cursor visible={!titleDone} />
-                </h2>
+                <p style={{
+                  fontSize: '14px', color: 'var(--color-text-muted)', lineHeight: '1.6', marginBottom: '20px',
+                  opacity: titleDone ? 1 : 0, transition: 'opacity 0.4s ease',
+                }}>
+                  {note.description}
+                </p>
               )}
-              <CategoryIcon size={20} color={categoryColor} strokeWidth={2} style={{ flexShrink: 0, marginTop: '2px' }} />
-            </div>
 
-            {!isEditing && note.event_date && (
-              <p style={{
-                display: 'flex', alignItems: 'center', gap: '4px',
-                fontSize: '11px', fontWeight: '700', color: 'var(--color-accent)',
-                marginBottom: '10px', marginTop: '-4px',
-              }}>
-                <CalendarDays size={11} strokeWidth={2.5} color="var(--color-accent)" />
-                {new Date(note.event_date + 'T12:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}
-              </p>
-            )}
-
-            {isEditing ? (
-              <textarea
-                value={editDescription}
-                onChange={(e) => setEditDescription(e.target.value)}
-                rows={4}
-                style={{
-                  width: '100%', border: 'none',
-                  borderBottom: '1px solid var(--color-border-light)',
-                  backgroundColor: 'transparent', fontFamily: 'var(--font)',
-                  fontSize: '14px', color: 'var(--color-text)', resize: 'none',
-                  outline: 'none', lineHeight: '1.6', padding: '0 0 10px',
-                  marginBottom: '16px', boxSizing: 'border-box',
+              {/* Campo fecha — solo en modo edición */}
+              {isEditing && (
+                <div style={{
+                  marginBottom: '16px',
                   opacity: editEntered ? 1 : 0,
                   transform: editEntered ? 'translateY(0)' : 'translateY(8px)',
-                  transition: 'opacity 0.25s ease 0.06s, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 0.06s',
-                }}
-              />
-            ) : (
-              <p style={{
-                fontSize: '14px', color: 'var(--color-text-muted)', lineHeight: '1.6', marginBottom: '20px',
-                opacity: titleDone ? 1 : 0, transition: 'opacity 0.4s ease',
-              }}>
-                {note.description}
-              </p>
-            )}
-
-            {/* Campo fecha — solo en modo edición */}
-            {isEditing && (
-              <div style={{
-                marginBottom: '16px',
-                opacity: editEntered ? 1 : 0,
-                transform: editEntered ? 'translateY(0)' : 'translateY(8px)',
-                transition: 'opacity 0.25s ease 0.12s, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 0.12s',
-              }}>
-                <p style={{
-                  fontSize: '11px', fontWeight: '700', color: 'var(--color-text-muted)',
-                  textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '6px',
+                  transition: 'opacity 0.25s ease 0.12s, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 0.12s',
                 }}>
-                  Fecha del evento <span style={{ fontWeight: '400', textTransform: 'none' }}>(opcional)</span>
-                </p>
-                <input
-                  type="date"
-                  value={editDate}
-                  onChange={(e) => setEditDate(e.target.value)}
-                  style={{
-                    border: 'none', borderBottom: '1px solid var(--color-border-light)',
-                    backgroundColor: 'transparent', fontFamily: 'var(--font)',
-                    fontSize: '13px', color: 'var(--color-text)', outline: 'none',
-                    padding: '0 0 6px', width: '100%', boxSizing: 'border-box',
-                  }}
-                />
-              </div>
-            )}
-
-            {/* Botón eliminar — solo visible en modo edición */}
-            {isEditing && (
-              <button
-                onClick={() => setShowDeleteConfirm(true)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '5px',
-                  background: 'none', border: 'none', cursor: 'pointer',
-                  fontFamily: 'var(--font)', fontSize: '12px', fontWeight: '700',
-                  color: '#DD686D', padding: '0 0 16px',
-                }}
-              >
-                <Trash2 size={13} strokeWidth={2.5} />
-                Eliminar nota
-              </button>
-            )}
-
-            <div style={{ borderTop: '1px solid var(--color-border)', marginBottom: '12px' }} />
-
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Avatar name={note.user?.name} size={30} />
-                <div>
-                  <p
-                    onClick={() => navigate(`/users/${note.user?.id}`)}
-                    onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
-                    onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
-                    style={{ fontSize: '12px', fontWeight: '600', color: 'var(--color-text)', cursor: 'pointer' }}
-                  >{note.user?.name}</p>
-                  <p style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>{timeAgo(note.created_at)}</p>
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                {completed && !isEditing && (
-                  <span style={{
-                    border: '1.5px solid var(--color-border)', color: 'var(--color-text)',
-                    fontSize: '10px', fontWeight: '700', padding: '2px 8px',
-                    textTransform: 'uppercase', letterSpacing: '0.5px',
+                  <p style={{
+                    fontSize: '11px', fontWeight: '700', color: 'var(--color-text-muted)',
+                    textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '6px',
                   }}>
-                    Completada
-                  </span>
-                )}
-
-                {isEditing ? (
-                  <EditActions
-                    onSave={handleSave}
-                    onCancel={cancelEdit}
-                    disabled={!editTitle.trim()}
+                    Fecha del evento <span style={{ fontWeight: '400', textTransform: 'none' }}>(opcional)</span>
+                  </p>
+                  <input
+                    type="date"
+                    value={editDate}
+                    onChange={(e) => setEditDate(e.target.value)}
+                    style={{
+                      border: 'none', borderBottom: '1px solid var(--color-border-light)',
+                      backgroundColor: 'transparent', fontFamily: 'var(--font)',
+                      fontSize: '13px', color: 'var(--color-text)', outline: 'none',
+                      padding: '0 0 6px', width: '100%', boxSizing: 'border-box',
+                    }}
                   />
-                ) : (
-                  <>
-                    {/* Botón Editar — autor o admin */}
-                    {canEdit && (
-                      <button
-                        onClick={startEdit}
-                        style={{
-                          display: 'flex', alignItems: 'center', gap: '4px',
-                          background: 'none', border: '1px solid var(--color-border)',
-                          fontFamily: 'var(--font)', fontSize: '11px', fontWeight: '700',
-                          color: 'var(--color-text-muted)', padding: '5px 10px', cursor: 'pointer',
-                        }}
-                      >
-                        <Pencil size={12} strokeWidth={2.5} />
-                        Editar
-                      </button>
-                    )}
-                    {/* Botón Resolver — solo autor, solo si no está completada */}
-                    {isAuthor && !completed && (
-                      <button
-                        onClick={openModal}
-                        style={{
-                          display: 'flex', alignItems: 'center', gap: '5px',
-                          backgroundColor: 'var(--color-accent)', color: 'white',
-                          border: 'none', fontFamily: 'var(--font)',
-                          fontSize: '11px', fontWeight: '700',
-                          padding: '5px 12px', cursor: 'pointer',
-                          textTransform: 'uppercase', letterSpacing: '0.5px',
-                        }}
-                      >
-                        <CheckCircle size={13} strokeWidth={2.5} />
-                        Resolver
-                      </button>
-                    )}
-                  </>
-                )}
+                </div>
+              )}
+
+              {/* Botón eliminar — solo visible en modo edición */}
+              {isEditing && (
+                <button
+                  onClick={() => setShowDeleteConfirm(true)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '5px',
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    fontFamily: 'var(--font)', fontSize: '12px', fontWeight: '700',
+                    color: '#DD686D', padding: '0 0 16px',
+                  }}
+                >
+                  <Trash2 size={13} strokeWidth={2.5} />
+                  Eliminar nota
+                </button>
+              )}
+
+              <div style={{ borderTop: '1px solid var(--color-border)', marginBottom: '12px' }} />
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Avatar name={note.user?.name} size={30} />
+                  <div>
+                    <p
+                      onClick={() => navigate(`/users/${note.user?.id}`)}
+                      onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                      onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+                      style={{ fontSize: '12px', fontWeight: '600', color: 'var(--color-text)', cursor: 'pointer' }}
+                    >{note.user?.name}</p>
+                    <p style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>{timeAgo(note.created_at)}</p>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  {completed && !isEditing && (
+                    <span style={{
+                      border: '1.5px solid var(--color-border)', color: 'var(--color-text)',
+                      fontSize: '10px', fontWeight: '700', padding: '2px 8px',
+                      textTransform: 'uppercase', letterSpacing: '0.5px',
+                    }}>
+                      Completada
+                    </span>
+                  )}
+
+                  {isEditing ? (
+                    <EditActions
+                      onSave={handleSave}
+                      onCancel={cancelEdit}
+                      disabled={!editTitle.trim()}
+                    />
+                  ) : (
+                    <>
+                      {/* Botón Editar — autor o admin */}
+                      {canEdit && (
+                        <button
+                          onClick={startEdit}
+                          style={{
+                            display: 'flex', alignItems: 'center', gap: '4px',
+                            background: 'none', border: '1px solid var(--color-border)',
+                            fontFamily: 'var(--font)', fontSize: '11px', fontWeight: '700',
+                            color: 'var(--color-text-muted)', padding: '5px 10px', cursor: 'pointer',
+                          }}
+                        >
+                          <Pencil size={12} strokeWidth={2.5} />
+                          Editar
+                        </button>
+                      )}
+                      {/* Botón Resolver — solo autor, solo si no está completada */}
+                      {isAuthor && !completed && (
+                        <button
+                          onClick={openModal}
+                          style={{
+                            display: 'flex', alignItems: 'center', gap: '5px',
+                            backgroundColor: 'var(--color-accent)', color: 'white',
+                            border: 'none', fontFamily: 'var(--font)',
+                            fontSize: '11px', fontWeight: '700',
+                            padding: '5px 12px', cursor: 'pointer',
+                            textTransform: 'uppercase', letterSpacing: '0.5px',
+                          }}
+                        >
+                          <CheckCircle size={13} strokeWidth={2.5} />
+                          Resolver
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Comentarios */}
-      <div style={{ padding: '0 24px', marginTop: '36px' }}>
-        <p style={{
-          fontSize: '11px', fontWeight: '700', color: 'var(--color-text-muted)',
-          textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px',
-          opacity: entered ? 1 : 0,
-          transition: `opacity 0.3s ease ${commentsBaseDelay - 0.1}s`,
-        }}>
-          Respuestas · {comments.length}
-        </p>
-
-        {comments.length === 0 && (
+        {/* Comentarios */}
+        <div style={{ padding: '0 24px', marginTop: '36px' }}>
           <p style={{
-            fontSize: '13px', color: 'var(--color-text-muted)', textAlign: 'center', marginBottom: '24px',
-            opacity: entered ? 1 : 0, transition: `opacity 0.3s ease ${commentsBaseDelay}s`,
+            fontSize: '11px', fontWeight: '700', color: 'var(--color-text-muted)',
+            textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px',
+            opacity: entered ? 1 : 0,
+            transition: `opacity 0.3s ease ${commentsBaseDelay - 0.1}s`,
           }}>
-            Sin respuestas todavía. ¡Sé el primero!
+            Respuestas · {comments.length}
           </p>
-        )}
 
-        {comments.map((comment, index) => {
-          const commentInitial = comment.user?.name?.charAt(0).toUpperCase() || '?';
-          const rotation = COMMENT_ROTATIONS[index % COMMENT_ROTATIONS.length];
-          const delay = `${commentsBaseDelay + index * 0.14}s`;
-          return (
-            <div key={comment.id} style={{
-              position: 'relative', marginTop: '16px', marginBottom: '20px',
-              opacity: entered ? 1 : 0,
-              transform: entered ? `rotate(${rotation}deg)` : `translateY(30px) rotate(${rotation - 2}deg)`,
-              transition: `opacity 0.35s ease ${delay}, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}`,
-              transformOrigin: 'center top',
+          {comments.length === 0 && (
+            <p style={{
+              fontSize: '13px', color: 'var(--color-text-muted)', textAlign: 'center', marginBottom: '24px',
+              opacity: entered ? 1 : 0, transition: `opacity 0.3s ease ${commentsBaseDelay}s`,
             }}>
-              <Tape top="-9px" />
-              <div style={{
-                backgroundColor: '#FEFCE8', border: '1px solid rgba(180,160,0,0.2)',
-                padding: '16px 16px 14px', boxShadow: '2px 4px 10px rgba(0,0,0,0.1)',
+              Sin respuestas todavía. ¡Sé el primero!
+            </p>
+          )}
+
+          {comments.map((comment, index) => {
+            const commentInitial = comment.user?.name?.charAt(0).toUpperCase() || '?';
+            const rotation = COMMENT_ROTATIONS[index % COMMENT_ROTATIONS.length];
+            const delay = `${commentsBaseDelay + index * 0.14}s`;
+            return (
+              <div key={comment.id} style={{
+                position: 'relative', marginTop: '16px', marginBottom: '20px',
+                opacity: entered ? 1 : 0,
+                transform: entered ? `rotate(${rotation}deg)` : `translateY(30px) rotate(${rotation - 2}deg)`,
+                transition: `opacity 0.35s ease ${delay}, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}`,
+                transformOrigin: 'center top',
               }}>
-                <p style={{ fontSize: '13px', color: 'var(--color-text)', lineHeight: '1.55', marginBottom: '12px' }}>
-                  {comment.content}
-                </p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                  <Avatar name={comment.user?.name} size={22} color="#DDC068" fontSize={13} />
-                  <p style={{ fontSize: '11px', fontWeight: '600', color: 'var(--color-text-muted)' }}>
-                    <span
-                      onClick={(e) => { e.stopPropagation(); navigate(`/users/${comment.user?.id}`); }}
-                      onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
-                      onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
-                      style={{ cursor: 'pointer' }}
-                    >{comment.user?.name}</span> · {timeAgo(comment.created_at)}
+                <Tape top="-9px" />
+                <div style={{
+                  backgroundColor: '#FEFCE8', border: '1px solid rgba(180,160,0,0.2)',
+                  padding: '16px 16px 14px', boxShadow: '2px 4px 10px rgba(0,0,0,0.1)',
+                }}>
+                  <p style={{ fontSize: '13px', color: 'var(--color-text)', lineHeight: '1.55', marginBottom: '12px' }}>
+                    {comment.content}
                   </p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                    <Avatar name={comment.user?.name} size={22} color="#DDC068" fontSize={13} />
+                    <p style={{ fontSize: '11px', fontWeight: '600', color: 'var(--color-text-muted)' }}>
+                      <span
+                        onClick={(e) => { e.stopPropagation(); navigate(`/users/${comment.user?.id}`); }}
+                        onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                        onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+                        style={{ cursor: 'pointer' }}
+                      >{comment.user?.name}</span> · {timeAgo(comment.created_at)}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
 
-        {/* Post-it escribir comentario */}
-        {(() => {
-          const delay = `${commentsBaseDelay + comments.length * 0.14 + 0.05}s`;
-          return (
-            <div style={{
-              position: 'relative', marginTop: '24px',
-              opacity: entered ? 1 : 0,
-              transform: entered ? 'rotate(0.5deg)' : 'translateY(30px) rotate(-1.5deg)',
-              transition: `opacity 0.35s ease ${delay}, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}`,
-            }}>
-              <Tape top="-9px" rotate="-2deg" />
+          {/* Post-it escribir comentario */}
+          {(() => {
+            const delay = `${commentsBaseDelay + comments.length * 0.14 + 0.05}s`;
+            return (
               <div style={{
-                backgroundColor: '#FEFCE8', border: '1px solid rgba(180,160,0,0.25)',
-                padding: '16px', boxShadow: '2px 4px 10px rgba(0,0,0,0.1)',
+                position: 'relative', marginTop: '24px',
+                opacity: entered ? 1 : 0,
+                transform: entered ? 'rotate(0.5deg)' : 'translateY(30px) rotate(-1.5deg)',
+                transition: `opacity 0.35s ease ${delay}, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}`,
               }}>
-                <textarea
-                  placeholder="Escribe tu respuesta..."
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  rows={3}
-                  style={{
-                    width: '100%', border: 'none',
-                    borderBottom: '1px solid rgba(180,160,0,0.3)',
-                    backgroundColor: 'transparent', fontFamily: 'var(--font)',
-                    fontSize: '13px', color: 'var(--color-text)', resize: 'none',
-                    outline: 'none', lineHeight: '1.6', paddingBottom: '8px',
-                    marginBottom: '12px', boxSizing: 'border-box',
-                  }}
-                />
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <button disabled={!newComment.trim()} 
-                  onClick={handleComment} style={{
-                    
-                    backgroundColor: 'var(--color-accent)', color: 'white',
-                    border: 'none', fontFamily: 'var(--font)', fontSize: '12px', fontWeight: '700',
-                    padding: '7px 18px', cursor: newComment.trim() ? 'pointer' : 'default',
-                    textTransform: 'uppercase', letterSpacing: '0.5px',
-                    opacity: newComment.trim() ? 1 : 0.45, transition: 'opacity 0.2s',
-                  }}>
-                    Publicar
-                  </button>
+                <Tape top="-9px" rotate="-2deg" />
+                <div style={{
+                  backgroundColor: '#FEFCE8', border: '1px solid rgba(180,160,0,0.25)',
+                  padding: '16px', boxShadow: '2px 4px 10px rgba(0,0,0,0.1)',
+                }}>
+                  <textarea
+                    placeholder="Escribe tu respuesta..."
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    rows={3}
+                    style={{
+                      width: '100%', border: 'none',
+                      borderBottom: '1px solid rgba(180,160,0,0.3)',
+                      backgroundColor: 'transparent', fontFamily: 'var(--font)',
+                      fontSize: '13px', color: 'var(--color-text)', resize: 'none',
+                      outline: 'none', lineHeight: '1.6', paddingBottom: '8px',
+                      marginBottom: '12px', boxSizing: 'border-box',
+                    }}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <button disabled={!newComment.trim()}
+                      onClick={handleComment} style={{
+
+                        backgroundColor: 'var(--color-accent)', color: 'white',
+                        border: 'none', fontFamily: 'var(--font)', fontSize: '12px', fontWeight: '700',
+                        padding: '7px 18px', cursor: newComment.trim() ? 'pointer' : 'default',
+                        textTransform: 'uppercase', letterSpacing: '0.5px',
+                        opacity: newComment.trim() ? 1 : 0.45, transition: 'opacity 0.2s',
+                      }}>
+                      Publicar
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })()}
+            );
+          })()}
+        </div>
       </div>
-    </div>
 
-    <MenuBar active="home" />
+      <MenuBar active="home" />
 
-    {showModal && (
-      <ResolveModal
-        commenters={commenters}
-        allUsers={[]}
-        onClose={closeModal}
-        onResolve={handleResolve}
-      />
-    )}
+      {showModal && (
+        <ResolveModal
+          commenters={commenters}
+          allUsers={[]}
+          onClose={closeModal}
+          onResolve={handleResolve}
+        />
+      )}
 
-    {showDeleteConfirm && (
-      <DeleteConfirmModal
-        title="¿Eliminar esta nota?"
-        message="Se borrará permanentemente y no se puede deshacer."
-        onConfirm={handleDelete}
-        onCancel={() => setShowDeleteConfirm(false)}
-      />
-    )}
+      {showDeleteConfirm && (
+        <DeleteConfirmModal
+          title="¿Eliminar esta nota?"
+          message="Se borrará permanentemente y no se puede deshacer."
+          onConfirm={handleDelete}
+          onCancel={() => setShowDeleteConfirm(false)}
+        />
+      )}
 
-    {/* Toast */}
-    {showToast && (
-      <div style={{
-        position: 'fixed', top: '24px', left: '50%',
-        transform: 'translateX(-50%)',
-        backgroundColor: 'var(--color-text)', color: 'white',
-        padding: '10px 20px',
-        fontFamily: 'var(--font)', fontSize: '13px', fontWeight: '700',
-        zIndex: 300,
-        opacity: toastVisible ? 1 : 0,
-        transition: 'opacity 0.3s ease',
-        display: 'flex', alignItems: 'center', gap: '8px',
-        whiteSpace: 'nowrap',
-      }}>
-        <CheckCircle size={15} strokeWidth={2.5} color="#68DD9E" />
-        Nota resuelta
-      </div>
-    )}
+      {/* Toast */}
+      {showToast && (
+        <div style={{
+          position: 'fixed', top: '24px', left: '50%',
+          transform: 'translateX(-50%)',
+          backgroundColor: 'var(--color-text)', color: 'white',
+          padding: '10px 20px',
+          fontFamily: 'var(--font)', fontSize: '13px', fontWeight: '700',
+          zIndex: 300,
+          opacity: toastVisible ? 1 : 0,
+          transition: 'opacity 0.3s ease',
+          display: 'flex', alignItems: 'center', gap: '8px',
+          whiteSpace: 'nowrap',
+        }}>
+          <CheckCircle size={15} strokeWidth={2.5} color="#68DD9E" />
+          Nota resuelta
+        </div>
+      )}
     </>
   );
 }
