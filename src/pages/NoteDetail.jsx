@@ -51,9 +51,11 @@ export default function NoteDetail() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setEntered(true), 50);
-    return () => clearTimeout(t);
-  }, []);
+    if (!loading) {
+      const t = setTimeout(() => setEntered(true), 50);
+      return () => clearTimeout(t);
+    }
+  }, [loading]);
 
   useEffect(() => {
     Promise.all([
