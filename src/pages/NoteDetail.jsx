@@ -142,6 +142,16 @@ export default function NoteDetail() {
     }
   };
 
+  const handleDeleteComment = async (commentId) => {
+    if (!window.confirm('¿Quieres eliminar este comentario?')) return;
+    try {
+      await api.delete(`/comments/${commentId}`, { headers: { Authorization: `Bearer ${token}` } });
+      setComments((prev) => prev.filter((c) => c.id !== commentId));
+    } catch (err) {
+      console.error('Error deleting comment:', err);
+    }
+  };
+
   const handleComment = async () => {
     try {
       const response = await api.post(`/notes/${id}/comments`, { content: newComment }, { headers: { Authorization: `Bearer ${token}` } });
@@ -419,7 +429,36 @@ export default function NoteDetail() {
                 <div style={{
                   backgroundColor: '#FEFCE8', border: '1px solid rgba(180,160,0,0.2)',
                   padding: '16px 16px 14px', boxShadow: '2px 4px 10px rgba(0,0,0,0.1)',
+                  position: 'relative',
                 }}>
+                  {(comment.user?.id === MY_USER_ID || IS_ADMIN) && (
+                    <button
+                      onClick={() => handleDeleteComment(comment.id)}
+                      onMouseEnter={(e) => {
+                        e.stopPropagation();
+                        e.currentTarget.style.backgroundColor = '#DD686D';
+                        e.currentTarget.style.color = 'white';
+                        e.currentTarget.style.borderColor = '#DD686D';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.stopPropagation();
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.color = '#92680A';
+                        e.currentTarget.style.borderColor = 'rgba(180,160,0,0.3)';
+                      }}
+                      style={{
+                        position: 'absolute', top: '8px', right: '8px',
+                        width: '20px', height: '20px',
+                        backgroundColor: 'transparent', color: '#92680A',
+                        border: '1px solid rgba(180,160,0,0.3)', cursor: 'pointer',
+                        fontSize: '11px', fontWeight: '700',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        transition: 'all 0.15s',
+                      }}
+                    >
+                      ✕
+                    </button>
+                  )}
                   <p style={{ fontSize: '13px', color: 'var(--color-text)', lineHeight: '1.55', marginBottom: '12px' }}>
                     {comment.content}
                   </p>
