@@ -124,6 +124,17 @@ export default function UserProfile() {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await api.delete('/logout', { headers: { Authorization: `Bearer ${token}` } });
+    } catch (err) {
+      console.error('Error logging out:', err);
+    } finally {
+      logout();
+      navigate('/');
+    }
+  };
+
   const handleDelete = async () => {
     try {
       await api.delete(`/users/${id}`, { headers: { Authorization: `Bearer ${token}` } });
@@ -360,6 +371,28 @@ export default function UserProfile() {
             </div>
           </div>
         </div>
+
+        {/* Botón logout */}
+        {isOwnProfile && !isEditing && (
+          <div style={{ textAlign: 'center', marginTop: '36px' }}>
+            <button
+              onClick={handleLogout}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+                background: 'none', border: 'none',
+                fontFamily: 'var(--font)', fontSize: '12px', fontWeight: '700',
+                color: 'var(--color-text-muted)', padding: '8px 12px',
+                cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.8px',
+                opacity: 0.7,
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = '0.7'}
+            >
+              <LogOut size={14} strokeWidth={2.5} />
+              Cerrar sesión
+            </button>
+          </div>
+        )}
 
         {/* Notas recientes */}
         {userNotes.length > 0 && (
