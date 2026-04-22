@@ -1,18 +1,17 @@
 import { useNavigate } from 'react-router-dom';
 import { Home, PenLine, Users, UserCircle } from 'lucide-react';
-
-// En producción viene del contexto de auth
-const MY_USER_ID = 2;
-
-const items = [
-  { key: 'home',      label: 'Inicio',     Icon: Home,        path: '/dashboard' },
-  { key: 'create',    label: 'Crear',      Icon: PenLine,     path: '/notes/new' },
-  { key: 'community', label: 'Comunidad',  Icon: Users,       path: '/community' },
-  { key: 'profile',   label: 'Perfil',     Icon: UserCircle,  path: `/users/${MY_USER_ID}` },
-];
+import { useAuth } from '../context/AuthContext';
 
 export default function MenuBar({ active }) {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const items = [
+    { key: 'home',      label: 'Inicio',     Icon: Home,        path: '/dashboard' },
+    { key: 'create',    label: 'Crear',      Icon: PenLine,     path: '/notes/new' },
+    { key: 'community', label: 'Comunidad',  Icon: Users,       path: '/community' },
+    { key: 'profile',   label: 'Perfil',     Icon: UserCircle,  path: `/users/${user?.id}` },
+  ];
 
   return (
     <>
