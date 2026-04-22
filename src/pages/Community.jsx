@@ -6,54 +6,67 @@ import Tape from '../components/Tape';
 import Avatar from '../components/Avatar';
 import { useTypewriter, Cursor } from '../hooks/useTypewriter.jsx';
 import { formatMemberSince } from '../utils/helpers';
+import { useAuth } from '../context/AuthContext.jsx';
+import api from '../api/axios';
 
-// Mock que replica la estructura real de GET /api/stats/community
-const MOCK_COMMUNITY_STATS = {
-  name:          'Los Pinos 42',
-  neighborhood:  'Lavapiés, Madrid',
-  created_at:    '2024-01-15',
-  users_count:   24,
-  notes_count:   156,
-};
-
-// Mock que replica la estructura real de GET /api/stats/top-helpers
-const MOCK_TOP_HELPERS = [
-  { id: 1, name: 'Ana García', thanks_count: 12, role: 'admin' },
-  { id: 3, name: 'Laura P.',   thanks_count: 8,  role: 'user'  },
-  { id: 2, name: 'Carlos M.',  thanks_count: 5,  role: 'user'  },
-];
-
-// Mock que replica la estructura real de GET /api/users
-const MOCK_USERS = [
-  { id: 1, name: 'Ana García', role: 'admin', floor: '1', door: 'A' },
-  { id: 2, name: 'Carlos M.',  role: 'user',  floor: '3', door: 'B' },
-  { id: 3, name: 'Laura P.',   role: 'user',  floor: '2', door: 'C' },
-  { id: 4, name: 'John Doe',   role: 'user',  floor: '4', door: 'A' },
-  { id: 5, name: 'Jane Smith', role: 'user',  floor: '1', door: 'B' },
-];
 
 const MEDAL_COLORS = ['#DDC068', '#9CA3AF', '#C2844A'];
 const STAT_ROTATIONS = [-1.5, 1, -0.8, 1.2];
 
 export default function Community() {
   const navigate = useNavigate();
+
+  const { token } = useAuth();
+
+  const [communityStats, setCommunityStats] = useState(null);
+  const [topHelpers, setTopHelpers] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const [entered, setEntered] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setEntered(true), 50);
-    return () => clearTimeout(t);
-  }, []);
+    if (!loading) {
+      const t = setTimeout(() => setEntered(true), 50);
+      return () => clearTimeout(t);
+    }
+  }, [loading]);
+
+  useEffect(() => {
+    Promise.all([
+      api.get('/stats/community', { headers: { Authorization: `Bearer ${token}` } }),
+      api.get('/stats/top-helpers', { headers: { Authorization: `Bearer ${token}` } }),
+      api.get('/users', { headers: { Authorization: `Bearer ${token}` } }),
+    ]).then(([statsRes, helpersRes, usersRes]) => {
+
+      setCommunityStats(statsRes.data.data);
+      setTopHelpers(helpersRes.data.data);
+      setUsers(usersRes.data.data);
+      setLoading(false);
+    }).catch(err => {
+      console.error('Error fetching community data:', err);
+      setLoading(false);
+    });
+    }, [token]);
 
   const { displayed: titleDisplayed, done: titleDone } = useTypewriter(
-    MOCK_COMMUNITY_STATS.name, 42, 300
+    communityStats?.community_name || 'Mi comunidad', 42, 300
   );
 
-  const stats = [
-    { label: 'Vecinos',  value: MOCK_COMMUNITY_STATS.users_count },
-    { label: 'Notas',    value: MOCK_COMMUNITY_STATS.notes_count },
-    { label: 'Barrio',   value: MOCK_COMMUNITY_STATS.neighborhood },
-    { label: 'Activa desde', value: formatMemberSince(MOCK_COMMUNITY_STATS.created_at) },
-  ];
+  const stats = communityStats ? [
+    { label: 'Vecinos',      value: communityStats.total_users },
+    { label: 'Notas',        value: communityStats.total_notes },
+    { label: 'Comentarios',  value: communityStats.total_comments },
+    { label: 'Gracias',      value: communityStats.total_thanks },
+  ] : [];
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100svh' }}>
+        <p style={{ fontSize: '14px', color: 'var(--color-text-muted)' }}>Cargando datos de la comunidad...</p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -154,7 +167,7 @@ export default function Community() {
           Top helpers del mes
         </p>
 
-        {MOCK_TOP_HELPERS.map((helper, index) => {
+        {topHelpers.map((helper, index) => {
           const delay = `${0.75 + index * 0.12}s`;
           const rotation = [-1.2, 0.7, -0.5][index];
           const medalColor = MEDAL_COLORS[index];
@@ -239,13 +252,13 @@ export default function Community() {
           fontSize: '11px', fontWeight: '700', color: 'var(--color-text-muted)',
           textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px',
           opacity: entered ? 1 : 0,
-          transition: `opacity 0.3s ease ${0.75 + MOCK_TOP_HELPERS.length * 0.12 + 0.1}s`,
+          transition: `opacity 0.3s ease ${0.75 + topHelpers.length * 0.12 + 0.1}s`,
         }}>
-          Vecinos · {MOCK_USERS.length}
+          Vecinos · {users.length}
         </p>
 
-        {MOCK_USERS.map((user, index) => {
-          const delay = `${0.75 + MOCK_TOP_HELPERS.length * 0.12 + 0.15 + index * 0.08}s`;
+        {users.map((user, index) => {
+          const delay = `${0.75 + topHelpers.length * 0.12 + 0.15 + index * 0.08}s`;
 
           return (
             <div
