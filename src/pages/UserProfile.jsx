@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Heart, Star, Pencil, Trash2 } from 'lucide-react';
+import { Heart, Star, Pencil, Trash2, LogOut } from 'lucide-react';
 import BackButton from '../components/BackButton';
 import EditActions from '../components/EditActions';
 import MenuBar from '../components/MenuBar';
@@ -10,29 +10,8 @@ import Tape from '../components/Tape';
 import Avatar from '../components/Avatar';
 import { CATEGORY_CONFIG, DEFAULT_CONFIG } from '../utils/categories';
 import { useTypewriter, Cursor } from '../hooks/useTypewriter.jsx';
-
-const MY_USER_ID = 2;
-const IS_ADMIN = false;
-
-const MOCK_USERS = [
-  { id: 1, name: 'Ana García', email: 'ana@corcho.com',    role: 'admin', floor: '1', door: 'A', community: { name: 'Los Pinos 42' }, created_at: '2024-01-15', thanks_count: 12, is_top_helper: true },
-  { id: 2, name: 'Carlos M.',  email: 'carlos@corcho.com', role: 'user',  floor: '3', door: 'B', community: { name: 'Los Pinos 42' }, created_at: '2024-02-20', thanks_count: 5,  is_top_helper: false },
-  { id: 3, name: 'Laura P.',   email: 'laura@corcho.com',  role: 'user',  floor: '2', door: 'C', community: { name: 'Los Pinos 42' }, created_at: '2024-03-10', thanks_count: 8,  is_top_helper: true },
-  { id: 4, name: 'John Doe',   email: 'john@corcho.com',   role: 'user',  floor: '4', door: 'A', community: { name: 'Los Pinos 42' }, created_at: '2024-04-05', thanks_count: 3,  is_top_helper: false },
-];
-
-const MOCK_USER_NOTES = {
-  1: [
-    { id: 1, title: 'Corte de agua el jueves',      category: { name: 'Avisos oficiales' }, created_at: new Date(Date.now() - 2 * 86400000).toISOString() },
-  ],
-  2: [
-    { id: 2, title: 'Fiesta de vecinos en el patio', category: { name: 'Eventos' },          created_at: new Date(Date.now() - 1 * 86400000).toISOString() },
-  ],
-  3: [
-    { id: 3, title: 'Se vende bicicleta',            category: { name: 'Mercadillo' },        created_at: new Date(Date.now() - 5 * 86400000).toISOString() },
-  ],
-  4: [],
-};
+import { useAuth } from '../contexts/AuthContext';
+import api from '../api/axios';
 
 
 const NOTE_ROTATIONS = [-1.5, 0.8, -0.6];
