@@ -103,20 +103,40 @@ export default function UserProfile() {
     setTimeout(() => { setIsEditing(false); setShowDeleteConfirm(false); }, 250);
   };
 
-  const handleSave = () => {
-    // TODO: llamada PUT /api/users/:id
-    profileUser.name = editName;
-    profileUser.email = editEmail;
-    profileUser.floor = editFloor;
-    profileUser.door = editDoor;
-    profileUser.role = editRole;
-    setEditEntered(false);
-    setTimeout(() => setIsEditing(false), 250);
+  const handleSave = async () => {
+    try {
+      const body = {
+        name: editName, email: editEmail, floor: editFloor, door: editDoor
+      };
+      if (editPassword) {
+        body.password = editPassword;
+        body.password_confirmation = editPassword;
+      }
+      if (IS_ADMIN) body.role = editRole;
+
+      const response = await api.put(`/users/${id}`, body, { headers: { Authorization: `Bearer ${token}` } });
+      setProfileUser(response.data.data);
+      setEditEntered(false);
+      setTimeout(() => setIsEditing(false), 250);
+    } catch (err) {
+      console.error('Error updating user:', err);
+      alert('Hubo un error al guardar los cambios. Por favor, intenta de nuevo.');
+    }
   };
 
-  const handleDelete = () => {
-    // TODO: llamada DELETE /api/users/:id
-    navigate('/dashboard');
+  const handleDelete = async () => {
+    try {
+      await api.delete(`/users/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      if (isOwnProfile) {
+        logout();
+        navigate('/');
+      } else {
+        navigate ('/dashboard');
+      }
+    } catch (err) {
+      console.error('Error deleting user:', err);
+      alert('Hubo un error al eliminar el usuario. Por favor, intenta de nuevo.');
+    }
   };
 
   return (
