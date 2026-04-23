@@ -33,8 +33,8 @@ export default function NoteDetail() {
   const [exiting, setExiting] = useState(false);
   const [newComment, setNewComment] = useState('');
 
-  // Estado local de completado (hasta conectar API)
   const [isCompleted, setIsCompleted] = useState(false);
+  const [users, setUsers] = useState([]);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -78,11 +78,33 @@ export default function NoteDetail() {
     setTimeout(() => navigate('/dashboard'), 260);
   };
 
-  const openModal = () => setShowModal(true);
+  const openModal = () => {
+    setShowModal(true);
+    if (users.length === 0) {
+      api.get('/users', { headers: { Authorization: `Bearer ${token}` } })
+        .then((res) => setUsers(res.data.data))
+        .catch((err) => console.error('Error fetching users:', err));
+    }
+  };
 
   const closeModal = () => setShowModal(false);
 
-  const handleResolve = () => {
+  const handleResolve = async (thankedUserIds) => {
+    try {
+      const response = await api.patch(`/notes/${id}/complete`, {}, { headers: { Authorization: `Bearer ${token}` } });
+      setNote(response.data.data);
+    } catch (err) {
+      console.error('Error completing note:', err);
+    }
+
+    if (thankedUserIds.length > 0) {
+      await Promise.allSettled(
+        thankedUserIds.map((userId) =>
+          api.post(`/users/${userId}/thanks`, { note_id: Number(id) }, { headers: { Authorization: `Bearer ${token}` } })
+        )
+      );
+    }
+
     setIsCompleted(true);
     setShowModal(false);
     setTimeout(() => {
@@ -534,7 +556,7 @@ export default function NoteDetail() {
       {showModal && (
         <ResolveModal
           commenters={commenters}
-          allUsers={[]}
+          allUsers={users}
           onClose={closeModal}
           onResolve={handleResolve}
         />
