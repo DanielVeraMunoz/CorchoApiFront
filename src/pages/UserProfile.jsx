@@ -348,7 +348,7 @@ export default function UserProfile() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <Heart size={16} color="#DD686D" strokeWidth={2} fill="#DD686D" />
                         <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--color-text)' }}>
-                          {profileUser.thanks_count} agradecimientos
+                          {profileUser.thanks_count ?? 0} agradecimientos
                         </span>
                       </div>
                       {profileUser.is_top_helper && (
