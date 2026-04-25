@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Heart, Star, Pencil, Trash2, LogOut } from 'lucide-react';
-import BackButton from '../components/BackButton';
 import EditActions from '../components/EditActions';
 import MenuBar from '../components/MenuBar';
 import { timeAgo, formatMemberSince } from '../utils/helpers';
@@ -57,11 +56,6 @@ export default function UserProfile() {
       });
   }, [id, token]
   )
-
-  const handleBack = () => {
-    setExiting(true);
-    setTimeout(() => navigate(-1), 260);
-  };
 
   const userNotes = [];
   const isOwnProfile = Number(id) === MY_USER_ID;
@@ -159,18 +153,8 @@ export default function UserProfile() {
         transition: 'opacity 0.25s ease, transform 0.25s ease',
       }}>
 
-        {/* Botón volver */}
-        <div style={{
-          padding: '52px 20px 0',
-          opacity: entered ? 1 : 0,
-          transform: entered ? 'translateX(0)' : 'translateX(-16px)',
-          transition: 'opacity 0.3s ease, transform 0.3s ease',
-        }}>
-          <BackButton onClick={handleBack} />
-        </div>
-
         {/* Tarjeta principal del usuario */}
-        <div style={{ padding: '0 24px', marginTop: '20px' }}>
+        <div style={{ padding: '0 24px', marginTop: '52px' }}>
           <div style={{
             position: 'relative',
             opacity: entered ? 1 : 0,
