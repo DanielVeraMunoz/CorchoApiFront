@@ -71,7 +71,10 @@ export default function Login() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [communityId, setCommunityId] = useState('');
+  const [floor, setFloor] = useState('');
+  const [door, setDoor] = useState('');
 
   const modeText = isLogin ? 'Iniciar sesión' : 'Crear cuenta';
   const { displayed, done } = useTypewriter(modeText);
@@ -92,14 +95,32 @@ export default function Login() {
   const handleBlur = (e) => { e.target.style.borderColor = 'var(--color-border)'; };
 
   const handleSubmit = async () => {
-    
     try {
-      const response = await api.post('/login', { email, password });
-      login(response.data.access_token, response.data.data);
-      navigate('/dashboard');
-      console.log('respuesta completa:', response.data);
+      if (isLogin) {
+        const response = await api.post('/login', { email, password });
+        login(response.data.access_token, response.data.data);
+        navigate('/dashboard');
+      } else {
+        const response = await api.post('/register', {
+          name,
+          email,
+          password,
+          password_confirmation: passwordConfirmation,
+          community_id: communityId,
+          floor,
+          door,
+        });
+        login(response.data.access_token, response.data.data);
+        navigate('/dashboard');
+      }
     } catch (err) {
-      setError('Email o contraseña incorrectos');
+      if (err.response?.status === 422) {
+        const errors = err.response.data.errors;
+        const first = errors ? Object.values(errors)[0][0] : 'Datos inválidos';
+        setError(first);
+      } else {
+        setError(isLogin ? 'Email o contraseña incorrectos' : 'Error al crear la cuenta');
+      }
     }
   };
 
@@ -290,6 +311,52 @@ export default function Login() {
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </select>
+            </div>
+          </AnimatedField>
+
+          {/* Campos: Piso y Puerta — solo registro */}
+          <AnimatedField visible={!isLogin}>
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '14px' }}>
+              <div style={{ flex: 1 }}>
+                <label style={labelStyle}>Piso</label>
+                <input
+                  type="text"
+                  placeholder="3"
+                  value={floor}
+                  onChange={(e) => setFloor(e.target.value)}
+                  style={fieldStyle}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                />
+              </div>
+              <div style={{ flex: 1 }}>
+                <label style={labelStyle}>Puerta</label>
+                <input
+                  type="text"
+                  placeholder="B"
+                  value={door}
+                  onChange={(e) => setDoor(e.target.value)}
+                  style={fieldStyle}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                />
+              </div>
+            </div>
+          </AnimatedField>
+
+          {/* Campo: Confirmar contraseña — solo registro */}
+          <AnimatedField visible={!isLogin}>
+            <div style={{ marginBottom: '14px' }}>
+              <label style={labelStyle}>Confirmar contraseña</label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={passwordConfirmation}
+                onChange={(e) => setPasswordConfirmation(e.target.value)}
+                style={fieldStyle}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+              />
             </div>
           </AnimatedField>
 
