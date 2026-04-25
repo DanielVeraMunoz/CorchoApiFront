@@ -126,7 +126,8 @@ export default function Login() {
 
   return (
     <div style={{
-      minHeight: '100svh',
+      position: 'fixed',
+      inset: 0,
       backgroundColor: '#C8956C',
       backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.07) 1px, transparent 1px)',
       backgroundSize: '6px 6px',
@@ -134,69 +135,38 @@ export default function Login() {
       alignItems: 'center',
       justifyContent: 'center',
       padding: '60px 24px 40px',
-      position: 'relative',
-      overflow: 'hidden',
+      overflowY: 'auto',
     }}>
 
-      {/* Nota decorativa — arriba izquierda */}
-      <div style={{
-        position: 'absolute', top: '6%', left: '-18px',
-        width: '110px', height: '90px',
-        backgroundColor: '#FFF7ED',
-        border: '1px solid rgba(0,0,0,0.12)',
-        transform: 'rotate(-9deg)',
-        boxShadow: '2px 3px 8px rgba(0,0,0,0.2)',
-      }}>
-        <Tape width="40px" top="-9px" rotate="2deg" />
-      </div>
-
-      {/* Nota decorativa — arriba derecha */}
-      <div style={{
-        position: 'absolute', top: '10%', right: '-12px',
-        width: '95px', height: '75px',
-        backgroundColor: '#FEF3C7',
-        border: '1px solid rgba(0,0,0,0.12)',
-        transform: 'rotate(7deg)',
-        boxShadow: '2px 3px 8px rgba(0,0,0,0.18)',
-      }}>
-        <div style={{
-          position: 'absolute', top: '-10px', left: '50%',
-          transform: 'translateX(-50%)',
-          width: '16px', height: '16px',
-          borderRadius: '50%',
-          backgroundColor: '#DD686D',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-        }} />
-        <div style={{
-          position: 'absolute', top: '6px', left: '50%',
-          transform: 'translateX(-50%)',
-          width: '3px', height: '7px',
-          backgroundColor: '#9CA3AF',
-          borderRadius: '0 0 2px 2px',
-        }} />
-      </div>
-
-      {/* Nota decorativa — abajo izquierda */}
-      <div style={{
-        position: 'absolute', bottom: '10%', left: '-8px',
-        width: '85px', height: '68px',
-        backgroundColor: '#EDE9FE',
-        border: '1px solid rgba(0,0,0,0.12)',
-        transform: 'rotate(5deg)',
-        boxShadow: '2px 3px 8px rgba(0,0,0,0.15)',
-      }} />
-
-      {/* Nota decorativa — abajo derecha */}
-      <div style={{
-        position: 'absolute', bottom: '6%', right: '8px',
-        width: '105px', height: '82px',
-        backgroundColor: '#DCFCE7',
-        border: '1px solid rgba(0,0,0,0.12)',
-        transform: 'rotate(-5deg)',
-        boxShadow: '2px 3px 8px rgba(0,0,0,0.15)',
-      }}>
-        <Tape width="40px" top="-9px" rotate="3deg" />
-      </div>
+      {/* Post-its decorativos repartidos por todo el fondo */}
+      {[
+        { top: '5%',  left: '3%',   w: 110, h: 88,  color: '#FFF7ED', rot: -9,  tape: true  },
+        { top: '8%',  right: '4%',  w: 95,  h: 75,  color: '#FEF3C7', rot: 7,   pin: true   },
+        { top: '30%', left: '1%',   w: 85,  h: 68,  color: '#EDE9FE', rot: 5,   tape: false },
+        { top: '35%', right: '2%',  w: 100, h: 80,  color: '#DCFCE7', rot: -6,  tape: true  },
+        { top: '60%', left: '4%',   w: 90,  h: 72,  color: '#FEF3C7', rot: 8,   tape: false },
+        { top: '62%', right: '3%',  w: 105, h: 84,  color: '#FFF7ED', rot: -4,  pin: true   },
+        { bottom: '8%', left: '2%', w: 88,  h: 70,  color: '#EDE9FE', rot: -7,  tape: true  },
+        { bottom: '6%', right: '5%',w: 100, h: 78,  color: '#DCFCE7', rot: 6,   tape: false },
+        { top: '18%', left: '20%',  w: 80,  h: 64,  color: '#FEF3C7', rot: -5,  tape: false },
+        { top: '75%', right: '20%', w: 85,  h: 68,  color: '#FFF7ED', rot: 9,   pin: true   },
+      ].map((n, i) => (
+        <div key={i} style={{
+          position: 'absolute',
+          top: n.top, bottom: n.bottom, left: n.left, right: n.right,
+          width: n.w, height: n.h,
+          backgroundColor: n.color,
+          border: '1px solid rgba(0,0,0,0.12)',
+          transform: `rotate(${n.rot}deg)`,
+          boxShadow: '2px 3px 8px rgba(0,0,0,0.18)',
+        }}>
+          {n.tape && <Tape width="40px" top="-9px" rotate="2deg" />}
+          {n.pin && <>
+            <div style={{ position: 'absolute', top: '-10px', left: '50%', transform: 'translateX(-50%)', width: '14px', height: '14px', borderRadius: '50%', backgroundColor: '#DD686D', boxShadow: '0 2px 4px rgba(0,0,0,0.3)' }} />
+            <div style={{ position: 'absolute', top: '5px', left: '50%', transform: 'translateX(-50%)', width: '3px', height: '6px', backgroundColor: '#9CA3AF', borderRadius: '0 0 2px 2px' }} />
+          </>}
+        </div>
+      ))}
 
       {/* Formulario principal */}
       <div style={{ position: 'relative', width: '100%', maxWidth: '340px', zIndex: 10 }}>
@@ -410,6 +380,7 @@ export default function Login() {
 
         </div>
       </div>
+
     </div>
   );
 }
