@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MenuBar from '../components/MenuBar';
 import Tape from '../components/Tape';
-import BackButton from '../components/BackButton';
-import { useTypewriter, Cursor } from '../hooks/useTypewriter.jsx';
 import { CATEGORY_CONFIG, DEFAULT_CONFIG } from '../utils/categories';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
@@ -36,14 +34,7 @@ export default function CreateNote() {
       .catch((err) => console.error('Error fetching categories:', err));
   }, []);
 
-  const handleBack = () => {
-    setExiting(true);
-    setTimeout(() => navigate('/dashboard'), 260);
-  };
-
   const canSubmit = title.trim().length > 0 && categoryId !== null;
-
-  const { displayed, done } = useTypewriter('Nueva nota', 42, 300);
 
   const handleFocus = (e) => { e.target.style.borderColor = 'var(--color-accent)'; };
   const handleBlur = (e) => { e.target.style.borderColor = 'transparent'; };
@@ -68,26 +59,9 @@ export default function CreateNote() {
         transition: 'opacity 0.25s ease, transform 0.25s ease',
       }}>
 
-        {/* Header */}
-        <div style={{
-          borderBottom: '1px solid var(--color-border)',
-          padding: '52px 20px 16px',
-          marginBottom: '28px',
-          display: 'flex', alignItems: 'center', gap: '16px',
-          opacity: entered ? 1 : 0,
-          transition: 'opacity 0.3s ease',
-        }}>
-          <BackButton onClick={handleBack} />
-          <h1 style={{
-            fontFamily: 'var(--font-display)', fontSize: '28px', fontWeight: '400',
-            color: 'var(--color-accent)', letterSpacing: '2px', margin: 0, minHeight: '34px',
-          }}>
-            {displayed}<Cursor visible={!done} />
-          </h1>
-        </div>
 
         {/* Nota / Formulario */}
-        <div style={{ padding: '0 24px' }}>
+        <div style={{ padding: '48px 24px 0' }}>
           <div style={{
             position: 'relative',
             opacity: entered ? 1 : 0,
