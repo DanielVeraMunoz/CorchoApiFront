@@ -10,6 +10,8 @@ import EditActions from '../components/EditActions';
 import Avatar from '../components/Avatar';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
 import ResolveModal from '../components/ResolveModal';
+import { useToast } from '../hooks/useToast';
+import Toast from '../components/Toast';
 import { CATEGORY_CONFIG, DEFAULT_CONFIG } from '../utils/categories';
 import { useTypewriter, Cursor } from '../hooks/useTypewriter.jsx';
 import api from '../api/axios';
@@ -39,9 +41,7 @@ export default function NoteDetail() {
 
   const [showModal, setShowModal] = useState(false);
 
-  // Toast
-  const [showToast, setShowToast] = useState(false);
-  const [toastVisible, setToastVisible] = useState(false);
+  const { showToast, toastVisible, toastMessage, triggerToast } = useToast();
 
   // Edición inline
   const [isEditing, setIsEditing] = useState(false);
@@ -108,12 +108,7 @@ export default function NoteDetail() {
 
     setIsCompleted(true);
     setShowModal(false);
-    setTimeout(() => {
-      setShowToast(true);
-      setTimeout(() => setToastVisible(true), 30);
-      setTimeout(() => setToastVisible(false), 2500);
-      setTimeout(() => setShowToast(false), 3000);
-    }, 320);
+    setTimeout(() => triggerToast('Nota resuelta'), 320);
   };
 
 
@@ -150,6 +145,7 @@ export default function NoteDetail() {
       setNote(response.data.data);
       setEditEntered(false);
       setTimeout(() => setIsEditing(false), 250);
+      triggerToast('Nota guardada');
     } catch (err) {
       console.error('Error saving note:', err);
     }
@@ -182,6 +178,7 @@ export default function NoteDetail() {
     try {
       await api.delete(`/comments/${commentId}`, { headers: { Authorization: `Bearer ${token}` } });
       setComments((prev) => prev.filter((c) => c.id !== commentId));
+      triggerToast('Comentario eliminado');
     } catch (err) {
       console.error('Error deleting comment:', err);
     }
@@ -614,24 +611,7 @@ export default function NoteDetail() {
         />
       )}
 
-      {/* Toast */}
-      {showToast && (
-        <div style={{
-          position: 'fixed', top: '24px', left: '50%',
-          transform: 'translateX(-50%)',
-          backgroundColor: 'var(--color-text)', color: 'white',
-          padding: '10px 20px',
-          fontFamily: 'var(--font)', fontSize: '13px', fontWeight: '700',
-          zIndex: 300,
-          opacity: toastVisible ? 1 : 0,
-          transition: 'opacity 0.3s ease',
-          display: 'flex', alignItems: 'center', gap: '8px',
-          whiteSpace: 'nowrap',
-        }}>
-          <CheckCircle size={15} strokeWidth={2.5} color="#68DD9E" />
-          Nota resuelta
-        </div>
-      )}
+      <Toast message={toastMessage} show={showToast} visible={toastVisible} />
     </>
   );
 }

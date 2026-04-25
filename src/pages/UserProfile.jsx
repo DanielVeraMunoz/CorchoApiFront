@@ -12,6 +12,8 @@ import { CATEGORY_CONFIG, DEFAULT_CONFIG } from '../utils/categories';
 import { useTypewriter, Cursor } from '../hooks/useTypewriter.jsx';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
+import { useToast } from '../hooks/useToast';
+import Toast from '../components/Toast';
 
 
 const NOTE_ROTATIONS = [-1.5, 0.8, -0.6];
@@ -40,6 +42,7 @@ export default function UserProfile() {
   const [editDoor, setEditDoor] = useState('');
   const [editRole, setEditRole] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const { showToast, toastVisible, toastMessage, triggerToast } = useToast();
 
   useEffect(() => {
     const t = setTimeout(() => setEntered(true), 50);
@@ -120,6 +123,7 @@ export default function UserProfile() {
       setProfileUser(response.data.data);
       setEditEntered(false);
       setTimeout(() => setIsEditing(false), 250);
+      triggerToast('Perfil actualizado');
     } catch (err) {
       console.error('Error updating user:', err);
       alert('Hubo un error al guardar los cambios. Por favor, intenta de nuevo.');
@@ -471,6 +475,7 @@ export default function UserProfile() {
           onCancel={() => setShowDeleteConfirm(false)}
         />
       )}
+      <Toast message={toastMessage} show={showToast} visible={toastVisible} />
     </>
   );
 }

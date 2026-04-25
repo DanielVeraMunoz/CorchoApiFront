@@ -4,6 +4,8 @@ import { useTypewriter, Cursor } from '../hooks/useTypewriter.jsx';
 import Tape from '../components/Tape';
 import api from '../api/axios.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import { useToast } from '../hooks/useToast';
+import Toast from '../components/Toast';
 
 const MOCK_COMMUNITIES = [
   { id: 1, name: 'Calle Mayor 42, Madrid' },
@@ -76,6 +78,8 @@ export default function Login() {
   const [floor, setFloor] = useState('');
   const [door, setDoor] = useState('');
 
+  const { showToast, toastVisible, toastMessage, triggerToast } = useToast();
+
   const modeText = isLogin ? 'Iniciar sesión' : 'Crear cuenta';
   const { displayed, done } = useTypewriter(modeText);
   const { login } = useAuth();
@@ -110,8 +114,11 @@ export default function Login() {
           floor,
           door,
         });
-        login(response.data.access_token, response.data.data);
-        navigate('/dashboard');
+        triggerToast('Cuenta creada correctamente');
+        setTimeout(() => {
+          login(response.data.access_token, response.data.data);
+          navigate('/dashboard');
+        }, 1200);
       }
     } catch (err) {
       if (err.response?.status === 422) {
@@ -381,6 +388,7 @@ export default function Login() {
         </div>
       </div>
 
+      <Toast message={toastMessage} show={showToast} visible={toastVisible} />
     </div>
   );
 }

@@ -5,6 +5,8 @@ import Tape from '../components/Tape';
 import { CATEGORY_CONFIG, DEFAULT_CONFIG } from '../utils/categories';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
+import { useToast } from '../hooks/useToast';
+import Toast from '../components/Toast';
 
 
 
@@ -12,6 +14,7 @@ export default function CreateNote() {
   const navigate = useNavigate();
 
   const { token } = useAuth();
+  const { showToast, toastVisible, toastMessage, triggerToast } = useToast();
   const [categories, setCategories] = useState([]);
 
   const [entered, setEntered] = useState(false);
@@ -45,7 +48,8 @@ export default function CreateNote() {
         { title, description, category_id: categoryId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      navigate('/dashboard');
+      triggerToast('Nota creada');
+      setTimeout(() => navigate('/dashboard'), 1200);
     } catch (err) {
       console.error('Error creating note:', err);
     }
@@ -183,6 +187,7 @@ export default function CreateNote() {
 
       </div>
       <MenuBar active="create" />
+      <Toast message={toastMessage} show={showToast} visible={toastVisible} />
     </>
   );
 }
