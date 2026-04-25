@@ -6,6 +6,7 @@ import NoteCard from '../components/NoteCard';
 import MenuBar from '../components/MenuBar';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import LoadingScreen from '../components/LoadingScreen';
 
 
 export default function Dashboard() {
@@ -62,6 +63,8 @@ export default function Dashboard() {
     const matchesCategory = selectedCategory === null || note.category.id === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <>

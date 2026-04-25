@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { CalendarDays, Heart, CheckCircle, Pencil, Trash2, RotateCcw } from 'lucide-react';
 import BackButton from '../components/BackButton';
+import LoadingScreen from '../components/LoadingScreen';
 import MenuBar from '../components/MenuBar';
 import Tape from '../components/Tape';
 import { timeAgo } from '../utils/helpers';
@@ -204,7 +205,7 @@ export default function NoteDetail() {
     .map((c) => c.user)
     .filter((u, i, arr) => u.id !== note.user?.id && arr.findIndex((x) => x.id === u.id) === i);
 
-  if (loading) return <div style={{ padding: '40px 24px', textAlign: 'center' }}>Cargando...</div>;
+  if (loading) return <LoadingScreen />;
   if (!note) return <div style={{ padding: '40px 24px', textAlign: 'center' }}><p>Nota no encontrada.</p><button onClick={() => navigate('/dashboard')}>Volver</button></div>;
 
   return (

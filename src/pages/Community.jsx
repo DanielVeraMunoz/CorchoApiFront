@@ -8,6 +8,7 @@ import { useTypewriter, Cursor } from '../hooks/useTypewriter.jsx';
 import { formatMemberSince } from '../utils/helpers';
 import { useAuth } from '../context/AuthContext.jsx';
 import api from '../api/axios';
+import LoadingScreen from '../components/LoadingScreen';
 
 
 const MEDAL_COLORS = ['#DDC068', '#9CA3AF', '#C2844A'];
@@ -63,7 +64,7 @@ export default function Community() {
   if (loading) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100svh' }}>
-        <p style={{ fontSize: '14px', color: 'var(--color-text-muted)' }}>Cargando datos de la comunidad...</p>
+        <LoadingScreen />
       </div>
     );
   }
