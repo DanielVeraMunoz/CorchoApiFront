@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { CalendarDays, Heart, CheckCircle, Pencil, Trash2 } from 'lucide-react';
+import { CalendarDays, Heart, CheckCircle, Pencil, Trash2, RotateCcw } from 'lucide-react';
 import BackButton from '../components/BackButton';
 import MenuBar from '../components/MenuBar';
 import Tape from '../components/Tape';
@@ -33,8 +33,8 @@ export default function NoteDetail() {
   const [exiting, setExiting] = useState(false);
   const [newComment, setNewComment] = useState('');
 
-  // Estado local de completado (hasta conectar API)
   const [isCompleted, setIsCompleted] = useState(false);
+  const [users, setUsers] = useState([]);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -51,9 +51,11 @@ export default function NoteDetail() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setEntered(true), 50);
-    return () => clearTimeout(t);
-  }, []);
+    if (!loading) {
+      const t = setTimeout(() => setEntered(true), 50);
+      return () => clearTimeout(t);
+    }
+  }, [loading]);
 
   useEffect(() => {
     Promise.all([
@@ -76,11 +78,33 @@ export default function NoteDetail() {
     setTimeout(() => navigate('/dashboard'), 260);
   };
 
-  const openModal = () => setShowModal(true);
+  const openModal = () => {
+    setShowModal(true);
+    if (users.length === 0) {
+      api.get('/users', { headers: { Authorization: `Bearer ${token}` } })
+        .then((res) => setUsers(res.data.data))
+        .catch((err) => console.error('Error fetching users:', err));
+    }
+  };
 
   const closeModal = () => setShowModal(false);
 
-  const handleResolve = () => {
+  const handleResolve = async (thankedUserIds) => {
+    try {
+      const response = await api.patch(`/notes/${id}/complete`, {}, { headers: { Authorization: `Bearer ${token}` } });
+      setNote(response.data.data);
+    } catch (err) {
+      console.error('Error completing note:', err);
+    }
+
+    if (thankedUserIds.length > 0) {
+      await Promise.allSettled(
+        thankedUserIds.map((userId) =>
+          api.post(`/users/${userId}/thanks`, { note_id: Number(id) }, { headers: { Authorization: `Bearer ${token}` } })
+        )
+      );
+    }
+
     setIsCompleted(true);
     setShowModal(false);
     setTimeout(() => {
@@ -130,6 +154,16 @@ export default function NoteDetail() {
     }
   };
 
+  const handleReopen = async () => {
+    try {
+      const response = await api.patch(`/notes/${id}/reopen`, {}, { headers: { Authorization: `Bearer ${token}` } });
+      setNote(response.data.data);
+      setIsCompleted(false);
+    } catch (err) {
+      console.error('Error reopening note:', err);
+    }
+  };
+
   const handleDelete = async () => {
     try {
       await api.delete(
@@ -139,6 +173,16 @@ export default function NoteDetail() {
       navigate('/dashboard');
     } catch (err) {
       console.error('Error deleting note:', err);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (!window.confirm('¿Quieres eliminar este comentario?')) return;
+    try {
+      await api.delete(`/comments/${commentId}`, { headers: { Authorization: `Bearer ${token}` } });
+      setComments((prev) => prev.filter((c) => c.id !== commentId));
+    } catch (err) {
+      console.error('Error deleting comment:', err);
     }
   };
 
@@ -201,7 +245,31 @@ export default function NoteDetail() {
               padding: '24px 20px 20px',
               boxShadow: '3px 5px 14px rgba(0,0,0,0.14)',
               marginTop: '12px',
+              position: 'relative',
             }}>
+              {completed && (
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  zIndex: 1, pointerEvents: 'none',
+                }}>
+                  <span style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '28px', fontWeight: '400',
+                    color: '#68DD9E',
+                    border: '3px solid #68DD9E',
+                    padding: '6px 18px',
+                    marginBottom: '50px',
+                    letterSpacing: '4px',
+                    transform: 'rotate(-12deg)',
+                    display: 'block',
+                  }}>
+                    COMPLETADA
+                  </span>
+                </div>
+              )}
+
+              <div style={{ opacity: completed ? 0.4 : 1, transition: 'opacity 0.3s ease' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '10px', marginBottom: '12px' }}>
                 {isEditing ? (
                   <input
@@ -308,6 +376,9 @@ export default function NoteDetail() {
                 </button>
               )}
 
+              </div>
+
+              <div style={{ position: 'relative', zIndex: 2 }}>
               <div style={{ borderTop: '1px solid var(--color-border)', marginBottom: '12px' }} />
 
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -325,16 +396,6 @@ export default function NoteDetail() {
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  {completed && !isEditing && (
-                    <span style={{
-                      border: '1.5px solid var(--color-border)', color: 'var(--color-text)',
-                      fontSize: '10px', fontWeight: '700', padding: '2px 8px',
-                      textTransform: 'uppercase', letterSpacing: '0.5px',
-                    }}>
-                      Completada
-                    </span>
-                  )}
-
                   {isEditing ? (
                     <EditActions
                       onSave={handleSave}
@@ -343,8 +404,7 @@ export default function NoteDetail() {
                     />
                   ) : (
                     <>
-                      {/* Botón Editar — autor o admin */}
-                      {canEdit && (
+                      {canEdit && !completed && (
                         <button
                           onClick={startEdit}
                           style={{
@@ -358,7 +418,6 @@ export default function NoteDetail() {
                           Editar
                         </button>
                       )}
-                      {/* Botón Resolver — solo autor, solo si no está completada */}
                       {isAuthor && !completed && (
                         <button
                           onClick={openModal}
@@ -375,9 +434,26 @@ export default function NoteDetail() {
                           Resolver
                         </button>
                       )}
+                      {canEdit && completed && (
+                        <button
+                          onClick={handleReopen}
+                          style={{
+                            display: 'flex', alignItems: 'center', gap: '5px',
+                            backgroundColor: 'var(--color-accent)', color: 'white',
+                            border: 'none', fontFamily: 'var(--font)',
+                            fontSize: '11px', fontWeight: '700',
+                            padding: '5px 12px', cursor: 'pointer',
+                            textTransform: 'uppercase', letterSpacing: '0.5px',
+                          }}
+                        >
+                          <RotateCcw size={13} strokeWidth={2.5} />
+                          Reabrir
+                        </button>
+                      )}
                     </>
                   )}
                 </div>
+              </div>
               </div>
             </div>
           </div>
@@ -419,7 +495,36 @@ export default function NoteDetail() {
                 <div style={{
                   backgroundColor: '#FEFCE8', border: '1px solid rgba(180,160,0,0.2)',
                   padding: '16px 16px 14px', boxShadow: '2px 4px 10px rgba(0,0,0,0.1)',
+                  position: 'relative',
                 }}>
+                  {(comment.user?.id === MY_USER_ID || IS_ADMIN) && (
+                    <button
+                      onClick={() => handleDeleteComment(comment.id)}
+                      onMouseEnter={(e) => {
+                        e.stopPropagation();
+                        e.currentTarget.style.backgroundColor = '#DD686D';
+                        e.currentTarget.style.color = 'white';
+                        e.currentTarget.style.borderColor = '#DD686D';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.stopPropagation();
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.color = '#92680A';
+                        e.currentTarget.style.borderColor = 'rgba(180,160,0,0.3)';
+                      }}
+                      style={{
+                        position: 'absolute', top: '8px', right: '8px',
+                        width: '20px', height: '20px',
+                        backgroundColor: 'transparent', color: '#92680A',
+                        border: '1px solid rgba(180,160,0,0.3)', cursor: 'pointer',
+                        fontSize: '11px', fontWeight: '700',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        transition: 'all 0.15s',
+                      }}
+                    >
+                      ✕
+                    </button>
+                  )}
                   <p style={{ fontSize: '13px', color: 'var(--color-text)', lineHeight: '1.55', marginBottom: '12px' }}>
                     {comment.content}
                   </p>
@@ -493,7 +598,7 @@ export default function NoteDetail() {
       {showModal && (
         <ResolveModal
           commenters={commenters}
-          allUsers={[]}
+          allUsers={users}
           onClose={closeModal}
           onResolve={handleResolve}
         />

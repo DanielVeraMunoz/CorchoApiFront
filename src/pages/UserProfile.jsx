@@ -25,6 +25,7 @@ export default function UserProfile() {
 
   const [profileUser, setProfileUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [thanksCount, setThanksCount] = useState(0);
 
   const [entered, setEntered] = useState(false);
   const [exiting, setExiting] = useState(false);
@@ -56,6 +57,17 @@ export default function UserProfile() {
       });
   }, [id, token]
   )
+
+  useEffect(() => {
+    api.get(`/users/${id}/thanks`, { headers: { Authorization: `Bearer ${token}` } })
+      .then((res) => setThanksCount(res.data.data?.length ?? 0))
+      .catch(() => setThanksCount(0));
+  }, [id, token]);
+
+  const handleBack = () => {
+    setExiting(true);
+    setTimeout(() => navigate(-1), 260);
+  };
 
   const userNotes = [];
   const isOwnProfile = Number(id) === MY_USER_ID;
@@ -332,7 +344,7 @@ export default function UserProfile() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <Heart size={16} color="#DD686D" strokeWidth={2} fill="#DD686D" />
                         <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--color-text)' }}>
-                          {profileUser.thanks_count ?? 0} agradecimientos
+                          {thanksCount} agradecimientos
                         </span>
                       </div>
                       {profileUser.is_top_helper && (

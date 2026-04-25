@@ -47,7 +47,7 @@ export default function MenuBar({ active }) {
         return (
           <button
             key={key}
-            onClick={() => navigate(path)}
+            onClick={() => active === key ? window.scrollTo({ top: 0, behavior: 'smooth' }) : navigate(path)}
             style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px',
               background: 'none', border: 'none', cursor: 'pointer', padding: '4px 6px',
