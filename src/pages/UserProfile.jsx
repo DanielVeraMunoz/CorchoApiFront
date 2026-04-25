@@ -26,6 +26,7 @@ export default function UserProfile() {
 
   const [profileUser, setProfileUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [thanksCount, setThanksCount] = useState(0);
 
   const [entered, setEntered] = useState(false);
   const [exiting, setExiting] = useState(false);
