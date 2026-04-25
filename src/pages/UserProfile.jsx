@@ -64,11 +64,6 @@ export default function UserProfile() {
       .catch(() => setThanksCount(0));
   }, [id, token]);
 
-  const handleBack = () => {
-    setExiting(true);
-    setTimeout(() => navigate(-1), 260);
-  };
-
   const userNotes = [];
   const isOwnProfile = Number(id) === MY_USER_ID;
 
