@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Heart, Star, Pencil, Trash2, LogOut } from 'lucide-react';
 import EditActions from '../components/EditActions';
+import LoadingScreen from '../components/LoadingScreen';
 import MenuBar from '../components/MenuBar';
 import { timeAgo, formatMemberSince } from '../utils/helpers';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
@@ -71,7 +72,7 @@ export default function UserProfile() {
     profileUser?.name || '', 42, 380
   );
 
-  if (loading) return <div style={{ padding: '40px 24px', textAlign: 'center' }}>Cargando...</div>;
+  if (loading) return <LoadingScreen />;
   if (!profileUser) return <div style={{ padding: '40px 24px', textAlign: 'center' }}><p>Usuario no encontrado.</p><button onClick={() => navigate(-1)}>Volver</button></div>;
 
   const cardRotation = profileUser.id % 2 === 0 ? 0.8 : -1;
