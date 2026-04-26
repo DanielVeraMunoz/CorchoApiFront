@@ -49,7 +49,7 @@ export default function UserProfile() {
       .then((res) => {
         setProfileUser(res.data.data);
         setLoading(false);
-        setTimeout(() => setEntered(true), 50);
+        setTimeout(() => setEntered(true), 0);
       })
       .catch((err) => {
         console.error('Error fetching user:', err);
