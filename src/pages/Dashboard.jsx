@@ -34,7 +34,7 @@ export default function Dashboard() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
-        setNotes(res.data.data);
+        setNotes([...res.data.data].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
       })
       .catch((err) => {
         console.error('Error fetching notes:', err);
