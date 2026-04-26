@@ -41,7 +41,7 @@ export default function Community() {
     ]).then(([statsRes, helpersRes, usersRes]) => {
 
       setCommunityStats(statsRes.data.data);
-      setTopHelpers(helpersRes.data.data);
+      setTopHelpers(helpersRes.data.data.slice(0, 3));
       setUsers(usersRes.data.data);
       setLoading(false);
     }).catch(err => {
