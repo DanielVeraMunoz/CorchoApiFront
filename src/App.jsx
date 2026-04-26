@@ -5,6 +5,7 @@ import NoteDetail from './pages/NoteDetail';
 import CreateNote from './pages/CreateNote';
 import UserProfile from './pages/UserProfile';
 import Community from './pages/Community';
+import NotFound from './pages/NotFound';
 
 export default function App() {
   return (
@@ -16,7 +17,7 @@ export default function App() {
         <Route path="/notes/:id"   element={<NoteDetail />} />
         <Route path="/users/:id"   element={<UserProfile />} />
         <Route path="/community"   element={<Community />} />
-        <Route path="*"            element={<Navigate to="/dashboard" />} />
+        <Route path="*"            element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
