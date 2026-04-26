@@ -45,15 +45,11 @@ export default function UserProfile() {
   const { showToast, toastVisible, toastMessage, triggerToast } = useToast();
 
   useEffect(() => {
-    const t = setTimeout(() => setEntered(true), 50);
-    return () => clearTimeout(t);
-  }, []);
-
-  useEffect(() => {
     api.get(`/users/${id}`, { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => {
         setProfileUser(res.data.data);
         setLoading(false);
+        setTimeout(() => setEntered(true), 50);
       })
       .catch((err) => {
         console.error('Error fetching user:', err);
