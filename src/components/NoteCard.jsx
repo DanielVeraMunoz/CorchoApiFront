@@ -1,4 +1,4 @@
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, CalendarDays } from 'lucide-react';
 import Tape from './Tape';
 import Avatar from './Avatar';
 import { CATEGORY_CONFIG, DEFAULT_CONFIG } from '../utils/categories';
@@ -85,6 +85,18 @@ export default function NoteCard({ note, onClick }) {
           </p>
           <CategoryIcon size={18} color={categoryColor} strokeWidth={2} style={{ flexShrink: 0, marginTop: '2px' }} />
         </div>
+
+        {/* Fecha evento */}
+        {note.event_date && (
+          <p style={{
+            display: 'flex', alignItems: 'center', gap: '4px',
+            fontSize: '11px', fontWeight: '700', color: 'var(--color-accent)',
+            marginBottom: '8px', marginTop: '-2px',
+          }}>
+            <CalendarDays size={11} strokeWidth={2.5} color="var(--color-accent)" />
+            {new Date(note.event_date + 'T12:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}
+          </p>
+        )}
 
         {/* Descripción */}
         <p style={{

@@ -22,6 +22,7 @@ export default function CreateNote() {
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [eventDate, setEventDate] = useState('');
   const [categoryId, setCategoryId] = useState(null);
 
   useEffect(() => {
@@ -45,7 +46,7 @@ export default function CreateNote() {
   const handleSubmit = async () => {
     try {
       await api.post('/notes',
-        { title, description, category_id: categoryId },
+        { title, description, event_date: eventDate || null, category_id: categoryId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       triggerToast('Nota creada');
@@ -120,6 +121,31 @@ export default function CreateNote() {
                   fontFamily: 'var(--font)', fontSize: '14px',
                   color: 'var(--color-text)', outline: 'none', resize: 'none',
                   lineHeight: '1.6', padding: '0 0 10px', marginBottom: '20px',
+                  boxSizing: 'border-box',
+                  transition: 'border-color 0.15s',
+                }}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+              />
+
+              {/* Fecha del evento (opcional) */}
+              <p style={{
+                fontSize: '11px', fontWeight: '700', color: 'var(--color-text-muted)',
+                textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '8px',
+              }}>
+                Fecha (opcional)
+              </p>
+              <input
+                type="date"
+                value={eventDate}
+                onChange={(e) => setEventDate(e.target.value)}
+                style={{
+                  width: '100%', border: 'none',
+                  borderBottom: '1px solid var(--color-border-light)',
+                  backgroundColor: 'transparent',
+                  fontFamily: 'var(--font)', fontSize: '14px',
+                  color: eventDate ? 'var(--color-text)' : 'var(--color-text-muted)',
+                  outline: 'none', padding: '0 0 10px', marginBottom: '20px',
                   boxSizing: 'border-box',
                   transition: 'border-color 0.15s',
                 }}
