@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTypewriter, Cursor } from '../hooks/useTypewriter.jsx';
 import Tape from '../components/Tape';
 import api from '../api/axios.js';
@@ -67,7 +67,8 @@ function AnimatedField({ visible, children }) {
 
 
 export default function Login() {
-  const [isLogin, setIsLogin] = useState(true);
+  const [searchParams] = useSearchParams();
+  const [isLogin, setIsLogin] = useState(searchParams.get('mode') !== 'register');
   const [wobble, setWobble] = useState(false);
 
   const [name, setName] = useState('');
