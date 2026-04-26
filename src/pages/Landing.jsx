@@ -50,7 +50,7 @@ export default function Landing() {
           maxWidth: '260px',
           margin: '0 auto',
         }}>
-          El tablón digital de tu comunidad de vecinos
+          El tablón digital <br/>de tu comunidad de vecinos
         </p>
       </div>
 
@@ -65,7 +65,7 @@ export default function Landing() {
           : 'translateY(40px) rotate(-3deg)',
         transition: 'opacity 0.4s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
       }}>
-        <Tape width="54px" height="20px" top="-10px" rotate="2deg" />
+        <Tape width="54px" height="20px" top="0px" rotate="2deg" />
         <div style={{
           backgroundColor: 'var(--color-white)',
           border: '1px solid var(--color-border)',
