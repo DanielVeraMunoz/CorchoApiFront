@@ -72,7 +72,21 @@ export default function UserProfile() {
   );
 
   if (loading) return <LoadingScreen />;
-  if (!profileUser) return <div style={{ padding: '40px 24px', textAlign: 'center' }}><p>Usuario no encontrado.</p><button onClick={() => navigate(-1)}>Volver</button></div>;
+  if (!profileUser) return (
+    <div style={{ backgroundColor: 'var(--color-bg)', minHeight: '100svh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+      <div style={{ position: 'relative', width: '100%', maxWidth: '320px' }}>
+        <Tape width="64px" height="22px" top="-11px" />
+        <div style={{ backgroundColor: 'var(--color-white)', border: '1px solid var(--color-border)', padding: '32px 28px 28px', boxShadow: '3px 5px 14px rgba(0,0,0,0.13)', marginTop: '12px', textAlign: 'center' }}>
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: '48px', color: 'var(--color-accent)', lineHeight: 1, marginBottom: '12px' }}>404</p>
+          <p style={{ fontSize: '15px', fontWeight: '700', color: 'var(--color-text)', marginBottom: '8px' }}>Usuario no encontrado</p>
+          <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', lineHeight: '1.5', marginBottom: '24px' }}>Este vecino no existe o fue eliminado.</p>
+          <button onClick={() => navigate(-1)} style={{ width: '100%', height: '44px', backgroundColor: 'var(--color-accent)', color: 'white', border: 'none', fontFamily: 'var(--font)', fontSize: '13px', fontWeight: '700', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            Volver
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
   const cardRotation = profileUser.id % 2 === 0 ? 0.8 : -1;
 
