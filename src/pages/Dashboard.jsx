@@ -77,7 +77,7 @@ export default function Dashboard() {
           : 'opacity 0.3s ease',
       }}>
 
-        {/* Header */}
+        
         <div style={{
           backgroundColor: 'var(--color-bg)',
           borderBottom: '1px solid var(--color-border)',

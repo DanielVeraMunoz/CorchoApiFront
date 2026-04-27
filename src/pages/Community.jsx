@@ -73,7 +73,7 @@ export default function Community() {
     <>
     <div style={{ backgroundColor: 'var(--color-bg)', minHeight: '100svh', paddingBottom: '100px' }}>
 
-      {/* Header */}
+      
       <div style={{
         borderBottom: '1px solid var(--color-border)',
         padding: '48px 18px 16px',
@@ -95,7 +95,7 @@ export default function Community() {
         </h1>
       </div>
 
-      {/* Stats — 4 mini notas en grid 2x2 */}
+      
       <div style={{ padding: '0 24px', marginBottom: '36px' }}>
         <p style={{
           fontSize: '11px', fontWeight: '700', color: 'var(--color-text-muted)',
@@ -157,7 +157,7 @@ export default function Community() {
         </div>
       </div>
 
-      {/* Top helpers */}
+      
       <div style={{ padding: '0 24px', marginBottom: '36px' }}>
         <p style={{
           fontSize: '11px', fontWeight: '700', color: 'var(--color-text-muted)',
@@ -189,7 +189,7 @@ export default function Community() {
                 transformOrigin: 'center top',
               }}
             >
-              {/* Chincheta con color de medalla */}
+              
               <div style={{
                 position: 'absolute', top: '-14px', left: '50%',
                 transform: 'translateX(-50%)',
@@ -247,7 +247,7 @@ export default function Community() {
         })}
       </div>
 
-      {/* Lista de vecinos */}
+      
       <div style={{ padding: '0 24px' }}>
         <p style={{
           fontSize: '11px', fontWeight: '700', color: 'var(--color-text-muted)',

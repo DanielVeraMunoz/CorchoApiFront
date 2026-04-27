@@ -39,8 +39,6 @@ const labelStyle = {
   marginBottom: '6px',
 };
 
-// Truco CSS moderno: grid-template-rows 0fr → 1fr anima altura desde/hasta 0
-// sin necesitar conocer la altura exacta del contenido
 function AnimatedField({ visible, children }) {
   return (
     <div style={{
@@ -52,8 +50,6 @@ function AnimatedField({ visible, children }) {
         overflow: 'hidden',
         minHeight: 0,
         opacity: visible ? 1 : 0,
-        // Al abrir: espera 0.2s (el hueco se abre primero) y luego aparece el contenido
-        // Al cerrar: desaparece inmediatamente antes de que el hueco se cierre
         transition: visible
           ? 'opacity 0.22s ease 0.18s'
           : 'opacity 0.12s ease',
@@ -146,7 +142,7 @@ export default function Login() {
       overflowY: 'auto',
     }}>
 
-      {/* Post-its decorativos repartidos por todo el fondo */}
+      
       {[
         { top: '5%',  left: '3%',   w: 110, h: 88,  color: '#FFF7ED', rot: -9,  tape: true  },
         { top: '8%',  right: '4%',  w: 95,  h: 75,  color: '#FEF3C7', rot: 7,   pin: true   },
@@ -176,12 +172,12 @@ export default function Login() {
         </div>
       ))}
 
-      {/* Formulario principal */}
+      
       <div style={{ position: 'relative', width: '100%', maxWidth: '340px', zIndex: 10 }}>
 
         <Tape width="64px" height="22px" top="-11px" />
 
-        {/* Card */}
+        
         <div style={{
           backgroundColor: 'var(--color-white)',
           border: '1px solid var(--color-border)',
@@ -191,7 +187,7 @@ export default function Login() {
           boxShadow: '4px 6px 18px rgba(0,0,0,0.22)',
         }}>
 
-          {/* Logo */}
+          
           <div style={{ textAlign: 'center', marginBottom: '8px' }}>
             <h1 style={{
               fontFamily: 'var(--font-display)',
@@ -215,7 +211,7 @@ export default function Login() {
             </p>
           </div>
 
-          {/* Título de modo con typewriter */}
+          
           <p style={{
             fontSize: '16px',
             fontWeight: '700',
@@ -229,7 +225,7 @@ export default function Login() {
             {displayed}<Cursor visible={!done} />
           </p>
 
-          {/* Campo: Nombre — solo registro, animado */}
+          
           <AnimatedField visible={!isLogin}>
             <div style={{ marginBottom: '14px' }}>
               <label style={labelStyle}>Nombre</label>
@@ -245,7 +241,7 @@ export default function Login() {
             </div>
           </AnimatedField>
 
-          {/* Campo: Email */}
+          
           <div style={{ marginBottom: '14px' }}>
             <label style={labelStyle}>Email</label>
             <input
@@ -259,7 +255,7 @@ export default function Login() {
             />
           </div>
 
-          {/* Campo: Contraseña */}
+          
           <div style={{ marginBottom: '14px' }}>
             <label style={labelStyle}>Contraseña</label>
             <input
@@ -273,7 +269,7 @@ export default function Login() {
             />
           </div>
 
-          {/* Campo: Comunidad — solo registro, animado */}
+          
           <AnimatedField visible={!isLogin}>
             <div style={{ marginBottom: '14px' }}>
               <label style={labelStyle}>Comunidad</label>
@@ -292,7 +288,7 @@ export default function Login() {
             </div>
           </AnimatedField>
 
-          {/* Campos: Piso y Puerta — solo registro */}
+          
           <AnimatedField visible={!isLogin}>
             <div style={{ display: 'flex', gap: '10px', marginBottom: '14px' }}>
               <div style={{ flex: 1 }}>
@@ -322,7 +318,7 @@ export default function Login() {
             </div>
           </AnimatedField>
 
-          {/* Campo: Confirmar contraseña — solo registro */}
+          
           <AnimatedField visible={!isLogin}>
             <div style={{ marginBottom: '14px' }}>
               <label style={labelStyle}>Confirmar contraseña</label>
@@ -338,10 +334,10 @@ export default function Login() {
             </div>
           </AnimatedField>
 
-          {/* Error */}
+          
           {error && <p style={{ color: '#DD686D', fontSize: '12px', marginBottom: '8px', textAlign: 'center' }}>{error}</p>}
 
-          {/* Botón */}
+          
           <button
             onClick={handleSubmit}
             style={{
@@ -365,7 +361,7 @@ export default function Login() {
             {isLogin ? 'Entrar' : 'Crear cuenta'}
           </button>
 
-          {/* Toggle */}
+          
           <p style={{ textAlign: 'center', fontSize: '12px', color: 'var(--color-text-muted)', marginTop: '20px' }}>
             {isLogin ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?'}{' '}
             <button

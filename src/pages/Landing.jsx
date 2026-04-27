@@ -25,7 +25,7 @@ export default function Landing() {
       gap: '40px',
     }}>
 
-      {/* Logo */}
+      
       <div style={{
         opacity: entered ? 1 : 0,
         transform: entered ? 'translateY(0)' : 'translateY(30px)',
@@ -54,7 +54,7 @@ export default function Landing() {
         </p>
       </div>
 
-      {/* Post-it decorativo */}
+      
       <div style={{
         position: 'relative',
         width: '100%',

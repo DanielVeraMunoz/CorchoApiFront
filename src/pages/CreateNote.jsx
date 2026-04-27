@@ -65,7 +65,7 @@ export default function CreateNote() {
       }}>
 
 
-        {/* Nota / Formulario */}
+        
         <div style={{ padding: '48px 24px 0' }}>
           <div style={{
             position: 'relative',
@@ -76,7 +76,7 @@ export default function CreateNote() {
             transition: 'opacity 0.4s ease, transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1)',
           }}>
 
-            {/* Tape */}
+            
             <Tape width="64px" height="22px" top="-11px" />
 
             <div style={{
@@ -87,7 +87,7 @@ export default function CreateNote() {
               marginTop: '12px',
             }}>
 
-              {/* Título */}
+              
               <input
                 type="text"
                 placeholder="Título de la nota..."
@@ -108,7 +108,7 @@ export default function CreateNote() {
                 onBlur={handleBlur}
               />
 
-              {/* Descripción */}
+              
               <textarea
                 placeholder="Describe tu nota... (opcional)"
                 value={description}
@@ -128,7 +128,7 @@ export default function CreateNote() {
                 onBlur={handleBlur}
               />
 
-              {/* Fecha del evento (opcional) */}
+              
               <p style={{
                 fontSize: '11px', fontWeight: '700', color: 'var(--color-text-muted)',
                 textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '8px',
@@ -153,7 +153,7 @@ export default function CreateNote() {
                 onBlur={handleBlur}
               />
 
-              {/* Selector de categoría */}
+              
               <p style={{
                 fontSize: '11px', fontWeight: '700', color: 'var(--color-text-muted)',
                 textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '12px',
@@ -187,7 +187,7 @@ export default function CreateNote() {
                 })}
               </div>
 
-              {/* Botón publicar */}
+              
               <button
                 disabled={!canSubmit}
                 onClick={handleSubmit}

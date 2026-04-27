@@ -4,10 +4,8 @@ import Avatar from './Avatar';
 import { CATEGORY_CONFIG, DEFAULT_CONFIG } from '../utils/categories';
 import { timeAgo } from '../utils/helpers';
 
-// Rotaciones suaves — 5 valores distintos, se asignan por id % 5
 const ROTATIONS = [-2, -0.8, 1.2, -1.5, 0.5];
 
-// Tipo de decoración — se asigna por id % 2
 const DECORATION_TYPES = ['pin', 'tape'];
 
 export default function NoteCard({ note, onClick }) {
@@ -31,7 +29,6 @@ export default function NoteCard({ note, onClick }) {
       }}
     >
 
-      {/* Chincheta */}
       {decorationType === 'pin' && (
         <div style={{
           position: 'absolute',
@@ -43,7 +40,7 @@ export default function NoteCard({ note, onClick }) {
           flexDirection: 'column',
           alignItems: 'center',
         }}>
-          {/* Cabeza de la chincheta */}
+          
           <div style={{
             width: '20px',
             height: '20px',
@@ -51,7 +48,7 @@ export default function NoteCard({ note, onClick }) {
             backgroundColor: categoryColor,
             boxShadow: `0 2px 5px rgba(0,0,0,0.4), inset 0 2px 3px rgba(255,255,255,0.35)`,
           }} />
-          {/* Vástago */}
+          
           <div style={{
             width: '3px',
             height: '9px',
@@ -65,7 +62,7 @@ export default function NoteCard({ note, onClick }) {
         <Tape width="54px" height="20px" rotate="-2deg" />
       )}
 
-      {/* Tarjeta */}
+      
       <div
         style={{
           backgroundColor: 'var(--color-white)',
@@ -78,7 +75,7 @@ export default function NoteCard({ note, onClick }) {
         onMouseLeave={(e) => e.currentTarget.style.boxShadow = '3px 5px 12px rgba(0,0,0,0.13)'}
       >
 
-        {/* Título + icono categoría */}
+        
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '10px', marginBottom: '6px' }}>
           <p style={{ fontSize: '15px', fontWeight: '700', color: 'var(--color-text)', lineHeight: '1.3', flex: 1 }}>
             {note.title}
@@ -86,7 +83,7 @@ export default function NoteCard({ note, onClick }) {
           <CategoryIcon size={18} color={categoryColor} strokeWidth={2} style={{ flexShrink: 0, marginTop: '2px' }} />
         </div>
 
-        {/* Fecha evento */}
+        
         {note.event_date && (
           <p style={{
             display: 'flex', alignItems: 'center', gap: '4px',
@@ -98,7 +95,7 @@ export default function NoteCard({ note, onClick }) {
           </p>
         )}
 
-        {/* Descripción */}
+        
         <p style={{
           fontSize: '13px',
           color: 'var(--color-text-muted)',
@@ -112,10 +109,10 @@ export default function NoteCard({ note, onClick }) {
           {note.description}
         </p>
 
-        {/* Separador */}
+        
         <div style={{ borderTop: '1px solid var(--color-border)', marginBottom: '10px' }} />
 
-        {/* Footer */}
+        
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Avatar name={note.user?.name} size={28} fontSize={15} />

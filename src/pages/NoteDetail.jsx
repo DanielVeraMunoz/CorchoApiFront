@@ -43,7 +43,7 @@ export default function NoteDetail() {
 
   const { showToast, toastVisible, toastMessage, triggerToast } = useToast();
 
-  // Edición inline
+
   const [isEditing, setIsEditing] = useState(false);
   const [editEntered, setEditEntered] = useState(false);
   const [editTitle, setEditTitle] = useState('');
@@ -214,7 +214,7 @@ export default function NoteDetail() {
         transition: 'opacity 0.25s ease, transform 0.25s ease',
       }}>
 
-        {/* Botón volver */}
+        
         <div style={{
           padding: '52px 20px 0',
           opacity: entered ? 1 : 0,
@@ -224,7 +224,7 @@ export default function NoteDetail() {
           <BackButton onClick={handleBack} />
         </div>
 
-        {/* Nota principal */}
+        
         <div style={{ padding: '0 24px', marginTop: '20px' }}>
           <div style={{
             position: 'relative',
@@ -330,7 +330,7 @@ export default function NoteDetail() {
                 </p>
               )}
 
-              {/* Campo fecha — solo en modo edición */}
+              
               {isEditing && (
                 <div style={{
                   marginBottom: '16px',
@@ -358,7 +358,7 @@ export default function NoteDetail() {
                 </div>
               )}
 
-              {/* Botón eliminar — solo visible en modo edición */}
+              
               {isEditing && (
                 <button
                   onClick={() => setShowDeleteConfirm(true)}
@@ -457,7 +457,7 @@ export default function NoteDetail() {
           </div>
         </div>
 
-        {/* Comentarios */}
+        
         <div style={{ padding: '0 24px', marginTop: '36px' }}>
           <p style={{
             fontSize: '11px', fontWeight: '700', color: 'var(--color-text-muted)',
@@ -542,7 +542,7 @@ export default function NoteDetail() {
             );
           })}
 
-          {/* Post-it escribir comentario */}
+          
           {(() => {
             const delay = `${commentsBaseDelay + comments.length * 0.14 + 0.05}s`;
             return (

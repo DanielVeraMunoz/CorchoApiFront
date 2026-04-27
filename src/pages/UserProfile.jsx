@@ -175,7 +175,7 @@ export default function UserProfile() {
         transition: 'opacity 0.25s ease, transform 0.25s ease',
       }}>
 
-        {/* Tarjeta principal del usuario */}
+        
         <div style={{ padding: '0 24px', marginTop: '52px' }}>
           <div style={{
             position: 'relative',
@@ -187,7 +187,7 @@ export default function UserProfile() {
             boxShadow: isEditing ? '6px 12px 28px rgba(0,0,0,0.18)' : 'none',
           }}>
 
-            {/* Tape */}
+            
             <Tape width="64px" height="22px" rotate="-1deg" top="-11px" />
 
             <div style={{
@@ -199,7 +199,7 @@ export default function UserProfile() {
               position: 'relative',
             }}>
 
-              {/* Botón editar — solo en modo lectura */}
+              
               {canEdit && !isEditing && (
                 <button onClick={startEdit} style={{
                   position: 'absolute', top: '16px', right: '16px',
@@ -214,7 +214,7 @@ export default function UserProfile() {
                 </button>
               )}
 
-              {/* Avatar + nombre */}
+              
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '18px' }}>
                 <Avatar name={isEditing ? editName || profileUser.name : profileUser.name} size={52} fontSize={28} />
                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -249,24 +249,24 @@ export default function UserProfile() {
                 </div>
               </div>
 
-              {/* Datos */}
+              
               <div style={{ opacity: nameDone ? 1 : 0, transition: 'opacity 0.4s ease 0.1s' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '16px' }}>
                   {isEditing ? (
                     <>
-                      {/* Email */}
+                      
                       <div style={{ animEntry: 0.06, opacity: editEntered ? 1 : 0, transform: editEntered ? 'translateY(0)' : 'translateY(8px)', transition: 'opacity 0.25s ease 0.06s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1) 0.06s' }}>
                         <p style={labelStyle}>Email</p>
                         <input type="email" value={editEmail} onChange={(e) => setEditEmail(e.target.value)} style={inputStyle} />
                       </div>
 
-                      {/* Contraseña */}
+                      
                       <div style={{ opacity: editEntered ? 1 : 0, transform: editEntered ? 'translateY(0)' : 'translateY(8px)', transition: 'opacity 0.25s ease 0.1s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1) 0.1s' }}>
                         <p style={labelStyle}>Nueva contraseña <span style={{ fontWeight: '400', textTransform: 'none' }}>(opcional)</span></p>
                         <input type="password" placeholder="••••••••" value={editPassword} onChange={(e) => setEditPassword(e.target.value)} style={inputStyle} />
                       </div>
 
-                      {/* Piso y Puerta */}
+                      
                       <div style={{ display: 'flex', gap: '12px', opacity: editEntered ? 1 : 0, transform: editEntered ? 'translateY(0)' : 'translateY(8px)', transition: 'opacity 0.25s ease 0.14s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1) 0.14s' }}>
                         <div style={{ flex: 1 }}>
                           <p style={labelStyle}>Piso</p>
@@ -278,7 +278,7 @@ export default function UserProfile() {
                         </div>
                       </div>
 
-                      {/* Rol — solo admin puede cambiar */}
+                      
                       {IS_ADMIN && (
                         <div style={{ opacity: editEntered ? 1 : 0, transform: editEntered ? 'translateY(0)' : 'translateY(8px)', transition: 'opacity 0.25s ease 0.18s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1) 0.18s' }}>
                           <p style={labelStyle}>Rol</p>
@@ -302,7 +302,7 @@ export default function UserProfile() {
                         </div>
                       )}
 
-                      {/* Botón eliminar */}
+                      
                       <button
                         onClick={() => setShowDeleteConfirm(true)}
                         style={{
@@ -378,7 +378,7 @@ export default function UserProfile() {
           </div>
         </div>
 
-        {/* Botón logout */}
+        
         {isOwnProfile && !isEditing && (
           <div style={{ textAlign: 'center', marginTop: '36px' }}>
             <button
@@ -400,7 +400,7 @@ export default function UserProfile() {
           </div>
         )}
 
-        {/* Notas recientes */}
+        
         {userNotes.length > 0 && (
           <div style={{ padding: '0 24px', marginTop: '36px' }}>
             <p style={{
@@ -433,7 +433,7 @@ export default function UserProfile() {
                     transformOrigin: 'center top',
                   }}
                 >
-                  {/* Chincheta del color de categoría */}
+                  
                   <div style={{
                     position: 'absolute', top: '-16px', left: '50%',
                     transform: 'translateX(-50%)',

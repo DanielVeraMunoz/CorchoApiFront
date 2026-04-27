@@ -15,7 +15,7 @@ export default function MenuBar({ active }) {
 
   return (
     <>
-    {/* Degradado que se funde con el fondo, siempre encima del contenido */}
+
     <div style={{
       position: 'fixed',
       bottom: 0,
