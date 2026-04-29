@@ -76,6 +76,7 @@ Built with **React 19** + **Vite**. Designed with a cork board aesthetic — rot
 | Hook | Description |
 |---|---|
 | `useTypewriter` | Animates text letter by letter with a configurable interval |
+| `useToast` | Manages toast state (message, visibility, auto-dismiss after 3s) |
 
 ---
 
@@ -154,10 +155,10 @@ src/
 
 ## Design
 
-- **Style**: cork board aesthetic — cards with slight rotation, pins, tape
-- **Font**: Nunito (Google Fonts)
-- **Palette**: `#DD686D` coral · `#68DD9E` mint green · `#68A7DD` sky blue
-- **Mobile-first**: base width 375px
+- **Style**: cork board aesthetic — square cards with slight rotation, pins, tape
+- **Fonts**: Figtree (body) · Jaro (display titles) — Google Fonts
+- **Palette**: `#F97316` orange · `#FFF7ED` warm cream · `#68DD9E` mint green · `#68A7DD` sky blue
+- **Mobile-first**: base width 390px
 - **Animations**: spring effect `cubic-bezier(0.34, 1.56, 0.64, 1)` on card entry
 - **Inspiration**: Airbnb + Nextdoor visual style
 
