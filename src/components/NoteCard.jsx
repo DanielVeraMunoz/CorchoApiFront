@@ -1,4 +1,4 @@
-import { MessageCircle, CalendarDays } from 'lucide-react';
+import { MessageCircle, CalendarDays, Crown } from 'lucide-react';
 import Tape from './Tape';
 import Avatar from './Avatar';
 import { CATEGORY_CONFIG, DEFAULT_CONFIG } from '../utils/categories';
@@ -117,8 +117,9 @@ export default function NoteCard({ note, onClick }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Avatar name={note.user?.name} size={28} fontSize={15} />
             <div>
-              <p style={{ fontSize: '12px', fontWeight: '600', color: 'var(--color-text)' }}>
+              <p style={{ fontSize: '12px', fontWeight: '600', color: 'var(--color-text)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                 {note.user?.name || 'Usuario'}
+                {note.user?.role === 'admin' && <Crown size={11} color="#F59E0B" strokeWidth={2.5} />}
               </p>
               <p style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>
                 {timeAgo(note.created_at)}
