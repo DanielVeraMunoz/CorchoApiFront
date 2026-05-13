@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { CalendarDays, Heart, CheckCircle, Pencil, Trash2, RotateCcw } from 'lucide-react';
+import { CalendarDays, Heart, CheckCircle, Pencil, Trash2, RotateCcw, Crown } from 'lucide-react';
 import BackButton from '../components/BackButton';
 import LoadingScreen from '../components/LoadingScreen';
 import MenuBar from '../components/MenuBar';
@@ -387,8 +387,11 @@ export default function NoteDetail() {
                       onClick={() => navigate(`/users/${note.user?.id}`)}
                       onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
                       onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
-                      style={{ fontSize: '12px', fontWeight: '600', color: 'var(--color-text)', cursor: 'pointer' }}
-                    >{note.user?.name}</p>
+                      style={{ fontSize: '12px', fontWeight: '600', color: 'var(--color-text)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      {note.user?.name}
+                      {note.user?.role === 'admin' && <Crown size={12} color="#F59E0B" strokeWidth={2.5} />}
+                    </p>
                     <p style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>{timeAgo(note.created_at)}</p>
                   </div>
                 </div>
@@ -528,13 +531,15 @@ export default function NoteDetail() {
                   </p>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
                     <Avatar name={comment.user?.name} size={22} color="#DDC068" fontSize={13} />
-                    <p style={{ fontSize: '11px', fontWeight: '600', color: 'var(--color-text-muted)' }}>
+                    <p style={{ fontSize: '11px', fontWeight: '600', color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: '3px' }}>
                       <span
                         onClick={(e) => { e.stopPropagation(); navigate(`/users/${comment.user?.id}`); }}
                         onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
                         onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
                         style={{ cursor: 'pointer' }}
-                      >{comment.user?.name}</span> · {timeAgo(comment.created_at)}
+                      >{comment.user?.name}</span>
+                      {comment.user?.role === 'admin' && <Crown size={10} color="#F59E0B" strokeWidth={2.5} />}
+                      <span>· {timeAgo(comment.created_at)}</span>
                     </p>
                   </div>
                 </div>

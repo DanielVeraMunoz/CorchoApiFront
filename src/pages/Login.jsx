@@ -269,7 +269,21 @@ export default function Login() {
             />
           </div>
 
-          
+          <AnimatedField visible={!isLogin}>
+            <div style={{ marginBottom: '14px' }}>
+              <label style={labelStyle}>Confirmar contraseña</label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={passwordConfirmation}
+                onChange={(e) => setPasswordConfirmation(e.target.value)}
+                style={fieldStyle}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+              />
+            </div>
+          </AnimatedField>
+
           <AnimatedField visible={!isLogin}>
             <div style={{ marginBottom: '14px' }}>
               <label style={labelStyle}>Comunidad</label>
@@ -318,23 +332,6 @@ export default function Login() {
             </div>
           </AnimatedField>
 
-          
-          <AnimatedField visible={!isLogin}>
-            <div style={{ marginBottom: '14px' }}>
-              <label style={labelStyle}>Confirmar contraseña</label>
-              <input
-                type="password"
-                placeholder="••••••••"
-                value={passwordConfirmation}
-                onChange={(e) => setPasswordConfirmation(e.target.value)}
-                style={fieldStyle}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-              />
-            </div>
-          </AnimatedField>
-
-          
           {error && <p style={{ color: '#DD686D', fontSize: '12px', marginBottom: '8px', textAlign: 'center' }}>{error}</p>}
 
           
