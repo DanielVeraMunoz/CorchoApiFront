@@ -7,12 +7,6 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../hooks/useToast';
 import Toast from '../components/Toast';
 
-const MOCK_COMMUNITIES = [
-  { id: 1, name: 'Calle Mayor 42, Madrid' },
-  { id: 2, name: 'Paseo del Prado 18, Madrid' },
-  { id: 3, name: 'Calle Luna 7, Barcelona' },
-  { id: 4, name: 'Av. Diagonal 55, Barcelona' },
-];
 
 const fieldStyle = {
   width: '100%',
@@ -71,7 +65,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
-  const [communityId, setCommunityId] = useState('');
+  const [inviteCode, setInviteCode] = useState('');
   const [floor, setFloor] = useState('');
   const [door, setDoor] = useState('');
 
@@ -107,7 +101,7 @@ export default function Login() {
           email,
           password,
           password_confirmation: passwordConfirmation,
-          community_id: communityId,
+          invite_code: inviteCode,
           floor,
           door,
         });
@@ -286,19 +280,16 @@ export default function Login() {
 
           <AnimatedField visible={!isLogin}>
             <div style={{ marginBottom: '14px' }}>
-              <label style={labelStyle}>Comunidad</label>
-              <select
-                value={communityId}
-                onChange={(e) => setCommunityId(e.target.value)}
-                style={{ ...fieldStyle, appearance: 'none', cursor: 'pointer' }}
+              <label style={labelStyle}>Código de comunidad</label>
+              <input
+                type="text"
+                placeholder="XXXX-0000"
+                value={inviteCode}
+                onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+                style={fieldStyle}
                 onFocus={handleFocus}
                 onBlur={handleBlur}
-              >
-                <option value="">Selecciona tu comunidad</option>
-                {MOCK_COMMUNITIES.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
+              />
             </div>
           </AnimatedField>
 
