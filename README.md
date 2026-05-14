@@ -4,6 +4,8 @@ React frontend for **CorchoApp**, a neighborhood community board where residents
 
 Built with **React 19** + **Vite**. Designed with a cork board aesthetic — rotated cards, pins, and tape.
 
+**Frontend:** https://corcho-api-front.vercel.app · **API:** https://web-production-0771b3.up.railway.app/api
+
 > Connects to [CorchoApp API](../CorchoAppApi/README.md) — make sure the backend is running before starting the frontend.
 
 ---
