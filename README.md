@@ -10,6 +10,20 @@ Built with **React 19** + **Vite**. Designed with a cork board aesthetic — rot
 
 ---
 
+## Try it
+
+Open the app and log in with any of these accounts:
+
+| Email | Password | Role |
+|---|---|---|
+| admin@corcho.com | password | admin |
+| demo@corcho.com | password | user |
+| john@corcho.com | password | user |
+
+> The API runs on Railway's free tier. The first request may take a few seconds to wake up if the service has been idle.
+
+---
+
 ## Table of Contents
 
 - [Tech Stack](#tech-stack)
